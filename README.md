@@ -211,7 +211,9 @@ use of external databases such as genome blast databases.
     using the `nj()` function from the `ape` package (CRAN).
   - `ex_align_id.rds`  
     Sequence alignments and statistics used to define the intron orthology. A
-	list based tree structure (protein family -> seed species -> alignment information).
+	list based tree structure (protein family -> seed species -> alignment information).  
+	Note that this file has been split into five smaller files with suffixes `_aa` to `_ae`.
+	The original file can be reformed by concatenation.
   - `genome_sizes.txt`
   - `int_s_inf.rds`  
     Inferred lengths (log~2~ transformed) of introns ancestral species.
