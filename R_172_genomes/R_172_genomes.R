@@ -458,6 +458,14 @@ save.image()
 
 saveRDS( ex.align.2, "ex_align_2.rds" )
 
+## to list the families and gene identifiers (pity I don't have the transcript identifiers here)
+write.table( (sapply( ex.align.2, function(x){
+    paste( c(x[[1]][[1]]$id1, unique(unlist(sapply(x, function(y){
+        sapply(y, function(z){ z$id2 })
+    })))), collapse=",")
+})), file='ex_align_2_id.txt', quote=FALSE, sep="\t")
+
+
 ## I didn't record the species which I used there. But never mind.
 ## We want to define a structure containing
 ## ex.align.2.stats[[sp1]][[sp2]][[ family ]] = stats..
