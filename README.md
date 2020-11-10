@@ -242,11 +242,11 @@ use of external databases such as genome blast databases.
     Alignment statistics derived from alignments of transcripts from 472 protein
 	families used to define phylogenetic distances. A list based tree (protein family ->
 	species 1 -> species 2 -> alignment statistics).
-  - `ex_align_2_jc.rds`
-  - `ex_align_2_jcg.rds`
   - `ex_align_2_id.txt`  
 	Protein families and gene identities for genes aligned all-against-all in order
 	to define phylogenetic distances.
+  - `ex_align_2_jc.rds`
+  - `ex_align_2_jcg.rds`
   - `ex_align_2_k2.rds`  
     Files with names matching `ex_align_2_(jc|jcg|k2).rds` contain pairwise
     phylogenetic distances: `_jc` Jukes Cantor, `_jcg` Jukes Cantor gapped,
