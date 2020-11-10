@@ -179,7 +179,7 @@ Both `R_max_parsimony` and `exon_aligneR` have their own github
 repositories; the ones given here reflect the code used in the
 described analyses.
 
-- `R_max_parsimony/`  
+- `external/R_max_parsimony/`  
   Source for wrappers and compiled functions implementing Sankoff maximimum
   parsimony as anextension to `R`.
   - `README.md`
@@ -190,7 +190,7 @@ described analyses.
     - `max_parsimony.c`
 	- `tree.c`
 	- `tree.h`
-- `exon_aligneR/`  
+- `external/exon_aligneR/`  
   Source for wrappers and compiled functions implementing a range of different
   pairwise alignment methods.
   - `README.md`
@@ -202,7 +202,7 @@ described analyses.
     - `needleman_wunsch.h`
     - `util.c`
     - `util.h`
-- `general_functions.R`
+- `external/general_functions.R`
   A collection of small utility functions used by some of the analyses
   (primarily the `hsvScale()` colour generating function).
 
