@@ -10,6 +10,8 @@ computer (ws1).
 
 ## Source files
 
+### Project specific source code
+
 - `R/`
   - `functions.R`  
   General plotting and data transformation functions. Somewhat redundant with
@@ -164,6 +166,46 @@ computer (ws1).
   - `compile_seqs.sh`
   - `count_nucleotides.pl`
   - `family_members.R`
+
+### External dependancies
+
+A mixture of compiled (C) and R code used by the project specific
+code. Note that the absolute locations of these files was different
+when used for the described analyses, and that it is necessary to
+amend all `source()` and `dyn.load()` statements in the above
+described code in order to reflect the new location.
+
+Both `R_max_parsimony` and `exon_aligneR` have their own github 
+repositories; the ones given here reflect the code used in the
+described analyses.
+
+- `R_max_parsimony/`  
+  Source for wrappers and compiled functions implementing Sankoff maximimum
+  parsimony as anextension to `R`.
+  - `README.md`
+  - `R/`  
+    `R` wrapper functions.
+    - `functions.R`
+  - `src/`
+    - `max_parsimony.c`
+	- `tree.c`
+	- `tree.h`
+- `exon_aligneR/`  
+  Source for wrappers and compiled functions implementing a range of different
+  pairwise alignment methods.
+  - `README.md`
+  - `functions.R`
+  - `src/`
+    - `cigar.h`
+    - `exon_aligneR.c`
+    - `needleman_wunsch.c`
+    - `needleman_wunsch.h`
+    - `util.c`
+    - `util.h`
+- `general_functions.R`
+  A collection of small utility functions used by some of the analyses
+  (primarily the `hsvScale()` colour generating function).
+
 
 ## Data files
 
