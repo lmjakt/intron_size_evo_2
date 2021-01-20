@@ -40,6 +40,10 @@ a4.h <- 11.69
 pdf.m <- 1.6
 mt.cex <- 2
 
+full.w <- a4.w * 170 / 210
+half.w <- a4.w * 85 / 210
+max.h <-  a4.w * 225 / 210
+
 ## the max.nm allowed
 max.l <- 1e8
 
@@ -641,7 +645,7 @@ plot.gene.align <- function(i, sm='long', cl='teleostei'){
     rect( b.x[-4], 0, b.x[-1], 0.24, col=c('white', 'grey', 'white') )
     segments( c(a.x[2], a.x[3]), 0, c(1, max(c(a.x[4], b.x[4]))), -0.8, lty=3 )
     plot.window(ylim=ylim, xlim=c(0, x['length']), xaxs='i')
-    draw.aligns( aligns.top[[sm]][[i]][[cl]], -2, -4, 1, al.cols.2, id.lwd=0.2 )
+    draw.aligns( aligns.top[[sm]][[i]][[cl]], -2, -4, 1, al.cols.2, id.lwd=0 )
     axis(1)
     tr.2 <- orth$tr[ orth.j, sp ]
     tr.1 <- orth$tr[ orth.j, sub(" ", ".", y$sp.1) ]
@@ -665,7 +669,7 @@ points( tmp.h$mids, dgumbel( tmp.h$mids, loc=null.models.evd$teleostei$estimate[
 for(sm in c('short', 'short.2', 'long', 'med', 'ctl')){
     for(cl in c('teleostei', 'mammalia')){
         cairo_pdf(paste('exon_intron_aligns_',  sm, '_', cl, '.pdf', sep=""),
-                  width=a4.w * pdf.m, height=a4.h * pdf.m, onefile=TRUE)
+                  width=a4.w * pdf.m * 0.9, height=a4.h * pdf.m * 0.9, onefile=TRUE)
 ##        par(mfrow=c(1,1))
         par(mfrow=c(6,1))
         par(oma=c(3,2,5,3))
@@ -682,6 +686,18 @@ for(sm in c('short', 'short.2', 'long', 'med', 'ctl')){
         dev.off()
     }
 }
+
+## To make an example plot for the supplementary methods to remove the need to
+## repeat the figure legend multiple times
+cairo_pdf('exon_intron_aligns_example.pdf',
+          width=a4.w * pdf.m * 0.9, height=a4.h * pdf.m / 6, onefile=TRUE)
+residue <- lm.res( align.top.lm[['teleostei']][['med']]$pts, null.models[['teleostei']], use.b=FALSE )
+o <- order(residue$res, decreasing=TRUE )
+with(align.top.lm[['teleostei']][['med']]$pts,
+     plot.gene.align(o[1], cl='teleostei', sm='med')
+     )
+dev.off()
+
 
 
 ## To see the correlation between different paramaters from tel.var
@@ -720,7 +736,8 @@ source(  "~/R/blurR/functions.R" )
 plot.coords <- function(coords, qr=0.99, ws=100L, sd=1, set.mfrow=TRUE,
                         breaks=seq(6, 13, 0.5), ctl.res=tel.ctl.lm$residuals,
                         cl='teleostei', xlab='', lab.cex=1.25, main='', main.cex=lab.cex,
-                        axis.cex=1.25, ylab.1='residual', ylim=NULL, ylim.2=NULL){
+                        axis.cex=1.25, ylab.1='residual', ylim=NULL, ylim.2=NULL,
+                        draw.y.axis=c(TRUE, TRUE), xaxs='i'){
     if(set.mfrow)
         par(mfrow=c(1,1))
 ##    attach(coords)
@@ -738,23 +755,25 @@ plot.coords <- function(coords, qr=0.99, ws=100L, sd=1, set.mfrow=TRUE,
     if(is.null(ylim)){
         ylim <- range(y, na.rm=TRUE)
     }
-    plot.window(xlim=range(x, na.rm=TRUE), ylim=ylim)
+    plot.window(xlim=range(x, na.rm=TRUE), ylim=ylim, xaxs=xaxs)
     mtext(xlab, side=1, line=2.5, cex=lab.cex)
     mtext(main, side=3, line=1.5, cex=lab.cex)
     mtext(ylab.1, side=2, cex=lab.cex, line=2.5)
 ##    mtext(paste('proportion above ', qr * 100, '%th ctl residual'), side=4, cex=lab.cex, line=2.5)
     points( x, y, col=col, cex=0.5 )
     axis(1, cex.axis=axis.cex)
-    axis(2, cex.axis=axis.cex)
+    if(draw.y.axis[1])
+        axis(2, cex.axis=axis.cex)
     if(is.null(ylim.2)) ylim.2 = c(0,max(counts, na.rm=TRUE))
     plot.window(xlim=range(x, na.rm=TRUE), ylim=ylim.2)
-    rect(breaks[-length(breaks)], 0, breaks[-1], counts, col=rgb(0.7,0.7,0.3, 0.3))
+    rect(breaks[-length(breaks)], 0, breaks[-1], counts, col=rgb(0.7,0.7,0.3, 0.3), xaxs=xaxs)
     ##
     o <- order(x)
     sq.m <- lin.blur( as.numeric(b.99[o]), x[o], sd, ws )
 ##    plot.window(xlim=range(x, na.rm=TRUE), ylim=c(0,max(counts, na.rm=TRUE)))
 ##    lines(sq.m[,'pos'], sq.m[,'bl'], col='blue', lwd=0.5)
-    axis(4, cex.axis=axis.cex)
+    if(draw.y.axis[2])
+        axis(4, cex.axis=axis.cex)
     invisible(cbind(x=x, y=y, b=as.numeric(b.99)))
 }
 
@@ -795,29 +814,48 @@ with(par(), mtext('B', at=usr[1], cex=mt.cex, line=1))
 dev.off()
 
 
-cairo_pdf("excess_residuals_by_length_2.pdf", width=0.9*a4.w * pdf.m, height=0.7 * a4.w * pdf.m )
+panel.line <- -0.5
+lab.cex <- 1
+axis.cex <- 0.8
+top.m <- 1.5
+cairo_pdf("excess_residuals_by_length_2.pdf", width=half.w * pdf.m, height=half.w * 1 * pdf.m )
 par(mfrow=c(2,2))
-par(mar=c(2.6, 2.1, 2.1, 3.1))
+par(mar=c(2.1, 2.1, top.m, 0.1))
 par(oma=c(3, 3, 2, 3))
 plot.coords(q10.ctl.coords, set.mfrow=FALSE, sd=0.5, ws=300L, qr=0.95, breaks=seq(6, 14, 1), xlab='',
-            main='', lab.cex=1.5, axis.cex=1.3, ylab.1='', ylim=range(c(tmp.1[,'y'], tmp.2[,'y']), na.rm=TRUE), ylim.2=c(0,0.7))
-with(par(), mtext('A', at=usr[1], cex=mt.cex, line=1))
-mtext('non-orthologous', cex=1.5, line=1)
+            main='', lab.cex=lab.cex, axis.cex=axis.cex, ylab.1='',
+            ylim=range(c(tmp.1[,'y'], tmp.2[,'y']), na.rm=TRUE), ylim.2=c(0,0.7), draw.y.axis=c(T,F))
+with(par(), mtext('A', at=usr[1], cex=mt.cex, line=panel.line+1))
+mtext('non-orthologous', cex=1, line=1)
+par(mar=c(2.1, 0.1, top.m, 2.1))
 plot.coords(q10.coords, set.mfrow=FALSE, sd=0.5, ws=300L, qr=0.95, breaks=seq(6, 14, 1), xlab='',
-            main='', lab.cex=1.5, axis.cex=1.3, ylab.1='', ylim=range(c(tmp.1[,'y'], tmp.2[,'y']), na.rm=TRUE), ylim.2=c(0,0.7))
-with(par(), mtext('B', at=usr[1], cex=mt.cex, line=1))
-with(par(), mtext('orthologous', cex=1.5, line=1))
-mtext('orthologous', cex=1.5, line=1)
-mtext('Teleostei', side=4, cex=1.5, line=3)
-plot.coords(q10.ctl.coords, set.mfrow=FALSE, sd=0.5, ws=300L, qr=0.95, cl='mammalia', breaks=seq(6, 14, 1), ctl.res=mam.ctl.lm$residuals,
-            xlab='', main='', lab.cex=1.5, axis.cex=1.3, ylab.1='', ylim=range(c(tmp.3[,'y'], tmp.4[,'y']), na.rm=TRUE), ylim.2=c(0,0.25))
-with(par(), mtext('C', at=usr[1], cex=mt.cex, line=1))
+            main='', lab.cex=lab.cex, axis.cex=axis.cex, ylab.1='',
+            ylim=range(c(tmp.1[,'y'], tmp.2[,'y']), na.rm=TRUE), ylim.2=c(0,0.7), draw.y.axis=c(F,T))
+with(par(), mtext('B', at=usr[1], cex=mt.cex, line=panel.line+1))
+with(par(), mtext('orthologous', cex=1, line=1))
+mtext('orthologous', cex=1, line=1)
+mtext('Teleostei', side=4, cex=1, line=2)
+par(mar=c(2.1, 2.1, top.m, 0.1))
+plot.coords(q10.ctl.coords, set.mfrow=FALSE, sd=0.5, ws=300L, qr=0.95, cl='mammalia',
+            breaks=seq(6, 14, 1), ctl.res=mam.ctl.lm$residuals,
+            xlab='', main='', lab.cex=lab.cex, axis.cex=axis.cex, ylab.1='',
+            ylim=range(c(tmp.3[,'y'], tmp.4[,'y']), na.rm=TRUE), ylim.2=c(0,0.25), draw.y.axis=c(T,F))
+with(par(), mtext('C', at=usr[1], cex=mt.cex, line=panel.line))
+par(mar=c(2.1, 0.1, top.m, 2.1))
 plot.coords(q10.coords, set.mfrow=FALSE, sd=0.5, ws=300L, qr=0.95, cl='mammalia', breaks=seq(6, 14, 1), ctl.res=mam.ctl.lm$residuals,
-            xlab='', main='', lab.cex=1.5, axis.cex=1.3, ylab.1='', ylim=range(c(tmp.3[,'y'], tmp.4[,'y']), na.rm=TRUE), ylim.2=c(0,0.25))
-with(par(), mtext('D', at=usr[1], cex=mt.cex, line=1))
-mtext('10th percentile log2 teleost intron length', side=1, cex=1.5, outer=TRUE, line=1)
-mtext('Mammalia', side=4, cex=1.5, line=3)
-mtext('residual', side=2, cex=1.5, outer=TRUE, line=1)
+            xlab='', main='', lab.cex=lab.cex, axis.cex=axis.cex, ylab.1='',
+            ylim=range(c(tmp.3[,'y'], tmp.4[,'y']), na.rm=TRUE), ylim.2=c(0,0.25), draw.y.axis=c(F,T))
+with(par(), mtext('D', at=usr[1], cex=mt.cex, line=panel.line))
+mtext('10th percentile log2 teleost intron length', side=1, cex=1, outer=TRUE, line=1)
+mtext('Mammalia', side=4, cex=1, line=2)
+##mtext('residual', side=2, cex=1, outer=TRUE, line=1)
+par(new = T, mfrow = c(1, 1), mar = c(0,0,0,0), oma=c(0,0,0,0))
+plot.new()
+plot.window(xlim=c(0,1), ylim=c(0,1), xaxs='i', yaxs='i')
+arrows(0.05, 0.15, y1=0.85, length=0.15)
+text(0.05 - strheight('residual'), 0.5, 'residual', srt=90)
+arrows(0.94, 0.15, y1=0.85, length=0.15)
+text(0.94 + strheight("A"), 0.5, 'proportion', srt=90)
 dev.off()
 
 ## let us check if the correlation against danio.rerio length is better or worse:

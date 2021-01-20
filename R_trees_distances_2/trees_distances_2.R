@@ -14,6 +14,15 @@ sp.db2sp <- function(x){
     x
 }
 
+sp.db2sp.2 <- function(x){
+    x <- sub( "([^_]+)_([^_]+)_?.*", "\\1 \\2", x)
+    substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+    xl  <- strsplit(x, " ")
+    x  <- sapply( xl, function(y){
+        paste( substr(y[1], 1, 1), ". ", paste(y[-1], collapse=" "), sep="" )})
+    x
+}
+
 uc.1 <- function(x){
     substr(x, 1, 1) <- toupper(substr(x, 1, 1))
     x
@@ -25,6 +34,10 @@ a4.w <- 8.27
 a4.h <- 11.69
 pdf.m <- 1.6
 mt.cex <- 2
+
+half.w <- a4.w * 85 / 210
+full.w <- a4.w * 170 / 210
+max.h <- a4.w * 225 / 210
 
 ## genome sizes
 tmp <- read.table("../R_172_genomes/genome_sizes.txt")
@@ -328,7 +341,8 @@ xlim[2] <- 1.2 * xlim[2]
 xlim[1] <- 0
 ylim <- range( unlist(lapply( leaf.int.2.d, function(x){ x[,'int.d'] })) )
 
-cairo_pdf("Intron_size_evolution.pdf", width=a4.w*0.5*pdf.m, height=a4.h*0.75*pdf.m)
+cairo_pdf("Intron_size_evolution.pdf", width=half.w * pdf.m, height=max.h*0.75*pdf.m)
+par(mar=c(1.1, 3.1, 1.1, 1.1))
 plot.new()
 plot.window(xlim=xlim, ylim=ylim, xaxs='i')
 abline(h=0, col='grey')
@@ -351,7 +365,7 @@ with( leaf.int.2.d, {
     text( x, y, uc.1(colnames(ends)[label.i])[o], pos=4,
      col=nodes.col[label.i[o]], cex=0.8) })
 legend('bottomleft', legend=names(class.col.3), text.col=class.col.3, box.lty=0,
-       inset=c(0,0.05))
+       inset=c(0.01,0.05))
 dev.off()
 
 identify( t(ends), labels=colnames(ends))
@@ -395,5 +409,280 @@ legend('bottomright', legend=names(class.col.3), text.col=class.col.3, box.lty=0
        inset=c(0,0))
 dev.off()
 
+
+#### Have the same sets of introns been minimised independently ?
+#### ex.align.2.k2.nj, we have the following nodes:
+
+## overlap between introns that remain long in the two descendants
+## long is defined as >= l.min
+## loss is defined as becoming <= s.max
+long.enrichment  <- function(s.max, l.min, ancestor, d1, d2, i.b=NULL, min.dec=1){
+    if(is.null(i.b))
+        i.b  <- int.s.inf.2[[d1]]$state[,1] > 60 & int.s.inf.2[[d2]]$state[,1] > 60
+    l.b  <- int.s.inf.2[[ancestor]]$state[i.b,1] >= l.min
+    l.b1  <- l.b & int.s.inf.2[[d1]]$state[i.b,1] > s.max
+    l.b2  <- l.b & int.s.inf.2[[d2]]$state[i.b,1] > s.max
+    l.b1.r  <- l.b & int.s.inf.2[[d1]]$state[i.b,1] <= s.max
+    l.b2.r  <- l.b & int.s.inf.2[[d2]]$state[i.b,1] <= s.max
+    ## which decrease or grow more than min.dec
+    d.b1  <- l.b & (int.s.inf.2[[ancestor]]$state[i.b,1] - int.s.inf.2[[d1]]$state[i.b,1]) > min.dec
+    d.b2  <- l.b & (int.s.inf.2[[ancestor]]$state[i.b,1] - int.s.inf.2[[d2]]$state[i.b,1]) > min.dec
+    g.b1  <- l.b & (int.s.inf.2[[d1]]$state[i.b,1] - int.s.inf.2[[ancestor]]$state[i.b,1]) > min.dec
+    g.b2  <- l.b & (int.s.inf.2[[d2]]$state[i.b,1] - int.s.inf.2[[ancestor]]$state[i.b,1]) > min.dec
+    ## and we check the enrichment of group 1 in 2
+    p  <- phyper( sum(l.b1 & l.b2)-1, sum(l.b1), sum(l.b) - sum(l.b1), sum(l.b2), lower.tail=FALSE )
+    p.r  <- phyper( sum(l.b1.r & l.b2.r)-1, sum(l.b1.r), sum(l.b) - sum(l.b1.r), sum(l.b2.r), lower.tail=FALSE )
+    p.d  <- phyper( sum(d.b1 & d.b2)-1, sum(d.b1), sum(l.b) - sum(d.b1), sum(d.b2), lower.tail=FALSE )
+    p.g  <- phyper( sum(g.b1 & g.b2)-1, sum(g.b1), sum(l.b) - sum(g.b1), sum(g.b2), lower.tail=FALSE )
+    c('ll'=sum(l.b1 & l.b2), 'l1'=sum(l.b1), 'l2'=sum(l.b2), 'l1.2'=sum(l.b1 | l.b2), 'n'=sum(l.b), 'p'=p,
+      'o.e'=sum(l.b1 & l.b2) / (sum(l.b2) * sum(l.b1) / sum(l.b)),
+      'll.r'=sum(l.b1.r & l.b2.r), 'l1.r'=sum(l.b1.r), 'l2.r'=sum(l.b2.r), 'l1.2.r'=sum(l.b1.r | l.b2.r), 'p.r'=p.r,
+      'o.e.r'=sum(l.b1.r & l.b2.r) / (sum(l.b2.r) * sum(l.b1.r) / sum(l.b)),
+      'p.d'=p.d, 'g.d'=p.g
+      )
+}
+
+evo.hist  <- function(ancestor, d1, i.b=NULL, ...){
+    if(is.null(i.b))
+        i.b  <- int.s.inf.2[[d1]]$state[,1] > 60
+    hist( int.s.inf.2[[d1]]$state[i.b,1] - int.s.inf.2[[ancestor]]$state[i.b,1], ...)
+}
+
+### We can define statistics for all the descendants of node 288
+### apart from 1 and 2, what proportions have increased or decreased in size.
+### Nodes 1 and 2 are T. rubripes and T. nigroviridis and form a separate branch
+### in our tree. Note that it looks like Mola_mola should be on the same
+### branch as T. rubripes and T. nigroviridis as it is a Tetraodontiformes.
+
+desc.288  <- which( nodes.descend( ex.align.2.k2.nj, 288 )[ 1:length(ex.align.2.k2.nj$tip.label) ] )
+
+t.fugu.288  <- sapply( desc.288[c(-1,-2)], function(x){ long.enrichment( 80, 80, ancestor=288, d1=2, x ) })
+colnames(t.fugu.288)  <- ex.align.2.k2.nj$tip.label[ desc.288[-(1:2)] ]
+
+## It would be nice to give this a group name. We can try to do this by having a look at the NCBI taxonomy:
+## Takifugu:      Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Eupercaria; Tetraodontiformes; Tetraodontoidei; Tetradontoidea; Tetraodontidae
+## Monopterus     Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Anabantaria; Synbranchiformes; Synbranchoidei; Synbranchidae;
+## Mastacembelus  Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Anabantaria; Synbranchiformes; Mastacembeloidei; Mastacembelidae
+## Anabas:        Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Anabantaria; Anabantiformes; Anabantoidei; Anabantidae
+## Betta:         Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Anabantaria; Anabantiformes; Anabantoidei; Osphronemidae; Macropodinae;
+## Parambassis    Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Ovalentaria incertae sedis; Ambassidae
+## Oreochromis    Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Cichlomorphae; Cichliformes; Cichlidae; African cichlids; Pseudocrenilabrinae; Oreochromini
+## Neolamprologus Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Cichlomorphae; Cichliformes; Cichlidae; African cichlids; Pseudocrenilabrinae; Lamprologini
+## Pundamilia     Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Cichlomorphae; Cichliformes; Cichlidae; African cichlids; Pseudocrenilabrinae; Haplochromini
+## Haplochromis   Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Cichlomorphae; Cichliformes; Cichlidae; African cichlids; Pseudocrenilabrinae; Haplochromini
+## Maylandia      Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Cichlomorphae; Cichliformes; Cichlidae; African cichlids; Pseudocrenilabrinae; Haplochromini
+## Astatotilapia  Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Cichlomorphae; Cichliformes; Cichlidae; African cichlids; Pseudocrenilabrinae; Haplochromini
+## Stegastes      Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Ovalentaria incertae sedis; Pomacentridae
+## Acanthochromis Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Ovalentaria incertae sedis; Pomacentridae
+## Amphiprion     Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Ovalentaria incertae sedis; Pomacentridae
+## Labrus         Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Eupercaria; Labriformes; Labridae
+## Mola           Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Eupercaria; Tetraodontiformes; Moloidei; Molidae  #####****#####
+## Scopthalmus    Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Carangaria; Pleuronectiformes; Pleuronectoidei; Scophthalmidae
+## Seriola        Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Carangaria; Carangiformes; Carangidae
+## Lates          Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Carangaria; Carangaria incertae sedis; Centropomidae
+## Gasterosteus   Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Eupercaria; Perciformes; Cottioidei; Gasterosteales; Gasterosteidae
+## Larimichthys   Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Eupercaria; Eupercaria incertae sedis; Sciaenidae
+## Cottoperca     Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Eupercaria; Perciformes; Notothenioidei; Bovichtidae
+## Kryptolebias   Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Atherinomorphae; Cyprinodontiformes; Aplocheiloidei; Rivulidae
+## Cyprinodon     Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Atherinomorphae; Cyprinodontiformes; Cyprinodontoidei; Cyprinodontidae; Cyprinodontinae; Cyprinodontini
+## Fundulus       Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Atherinomorphae; Cyprinodontiformes; Cyprinodontoidei; Fundulidae
+## Poecilia:      Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Atherinomorphae; Cyprinodontiformes; Cyprinodontoidei; Poeciliidae; Poeciliinae
+## Gambusia       Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Atherinomorphae; Cyprinodontiformes; Cyprinodontoidei; Poeciliidae; Poeciliinae
+## Xiphophorus    Acanthomorphata; Euacanthomorphacea; Percomorphaceae; Ovalentaria; Atherinomorphae; Cyprinodontiformes; Cyprinodontoidei; Poeciliidae; Poeciliinae
+
+## note that some species that are defined as being Ovalentaria are located outside of this
+## set, suggesting either errors in the tree (not that unlikely) or issues with the
+## standard taxonomy (less likely).
+
+## in order to draw:
+tree.err  <- c("mola_mola")
+tree.eupercaria  <- c("cottoperca_gobio", "larimichthys_crocea", "gasterosteus_aculeatus",
+                      "labrus_bergylta")
+tree.f  <- setdiff( colnames(t.fugu.288), c(tree.err, tree.eupercaria))
+tree.fb  <- colnames( t.fugu.288 ) %in% tree.f 
+
+
+cairo_pdf("selective_retention_1.pdf", width=half.w * pdf.m, height=half.w * pdf.m * 1.25 )
+par(mfrow=c(3,2))
+par(mar=c(5.1, 4.1, 0.4, 1.1))
+par(oma=c(0, 0, 2.1, 1.0))
+## What proportion are retained as long?
+t.fugu.288.col  <- ifelse( tree.fb, 'black', 'gray' )
+lab.i  <- match( c("betta_splendens", "gasterosteus_aculeatus", "parambassis_ranga", "anabas_testudineus",
+                   "scophthalmus_maximus", "mastacembelus_armatus", "mola_mola"), colnames(t.fugu.288))
+lab.lab  <- paste(1:length(lab.i), sp.db2sp.2( colnames(t.fugu.288)[ lab.i ] ) )
+plot( genome.sizes[ colnames(t.fugu.288) ], t.fugu.288['l2',] / t.fugu.288['n',], col=t.fugu.288.col,
+     xlab='genome size', ylab='proportion retained', ylim=c(0.65, 1), pch=19 )
+points( genome.sizes[ colnames(t.fugu.288) ], t.fugu.288['l1',] / t.fugu.288['n',], col=t.fugu.288.col, pch=1 )
+legend( 'topleft', legend=c('T. rubripes', 'other'), pch=c(1,19), cex=0.8, box.col='black' )
+with(par(), mtext("A", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+text( genome.sizes[ colnames(t.fugu.288[,lab.i]) ], t.fugu.288['l2',lab.i] / t.fugu.288['n',lab.i], pos=1 )
+plot( t.fugu.288['l1.2',] / t.fugu.288['n',], t.fugu.288['o.e',], xlab='proportion retained (union)', ylab='observed/expected',
+     col=t.fugu.288.col, pch=19)
+legend('topright', legend=c('Eupercaria', 'other'), pch=19, col=c('gray', 'black'), cex=0.8)
+text( t.fugu.288['l1.2',lab.i] / t.fugu.288['n',lab.i], t.fugu.288['o.e',lab.i], pos=c(1, 1, 1, 1, 3, 1, 3) )
+with(par(), mtext("B", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+## and the enrichment plots
+plot( genome.sizes[ colnames(t.fugu.288) ], -log10(1e-320 + t.fugu.288['p',]), xlab='genome size', ylab='-log10 p', col=t.fugu.288.col, pch=19 )
+text( genome.sizes[ colnames(t.fugu.288[,lab.i]) ], -log10(1e-320 + t.fugu.288['p',lab.i]), pos=1 )
+with(par(), mtext("C", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+plot( ex.align.2.k2[ 'takifugu_rubripes', colnames(t.fugu.288) ], -log10(1e-320 + t.fugu.288['p',]),
+     xlab='Kimura distance', ylab='-log10 p', col=t.fugu.288.col, pch=19 )
+with(par(), mtext("D", cex=mt.cex, at=usr[1],, adj=1, line=0.2))
+text( ex.align.2.k2[ 'takifugu_rubripes', colnames(t.fugu.288[,lab.i]) ], -log10(1e-320 + t.fugu.288['p',lab.i]), pos=1 )
+plot( genome.sizes[ colnames(t.fugu.288) ], t.fugu.288['o.e',], xlab='genome size', ylab='observed / expected', col=t.fugu.288.col, pch=19 )
+with(par(), mtext("E", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+text( genome.sizes[ colnames(t.fugu.288[,lab.i]) ], t.fugu.288['o.e',lab.i], pos=1 )
+lab.w  <- max( strwidth( lab.lab, cex=0.8 ) )
+with(par(), text(usr[2] - lab.w * 1.1, 1.15, paste(lab.lab, collapse='\n'), adj=c(0, 1), cex=0.8) )
+plot( ex.align.2.k2[ 'takifugu_rubripes', colnames(t.fugu.288) ], t.fugu.288['o.e',], xlab='Kimura distance',
+     ylab='', col=t.fugu.288.col, pch=19 )
+with(par(), mtext("F", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+text( ex.align.2.k2[ 'takifugu_rubripes', colnames(t.fugu.288[,lab.i]) ], t.fugu.288['o.e',lab.i], pos=1 )
+dev.off()
+
+
+### let us have a look at the MRCA of Danio rerio and others in the same
+### manner. This is more complicated, because many introns in D. rerio
+### will be long, so the commonality will be less.
+
+desc.266  <- which( nodes.descend( ex.align.2.k2.nj, 266 )[ 1:length(ex.align.2.k2.nj$tip.label) ] )
+## that's basically all the teleosts.
+## we want to remove those that share a clade with Danio rerio.
+desc.267  <- which( nodes.descend( ex.align.2.k2.nj, 267 )[ 1:length(ex.align.2.k2.nj$tip.label) ] )
+
+desc.266.dr  <- setdiff( desc.266, desc.267 )
+
+## we can then ask the question of any node in desc.267 and desc.267.dr
+d.rerio.266  <- sapply( desc.266.dr, function(x){ long.enrichment(80, 80, ancestor=266, d1=78, x)})
+colnames(d.rerio.266)  <- ex.align.2.k2.nj$tip.label[ desc.266.dr ] 
+
+sp  <- colnames(d.rerio.266)
+
+cairo_pdf("selective_retention_2.pdf", width=half.w * pdf.m, height=half.w * pdf.m * 1.25 )
+par(mfrow=c(3,2))
+par(mar=c(5.1, 4.1, 0.4, 1.1))
+par(oma=c(0, 0, 2.1, 1.0))
+## What proportion are retained as long?
+d.rerio.266.col  <- 'black'
+lab.i  <- match( c("tetraodon_nigroviridis", "takifugu_rubripes", "betta_splendens", "gasterosteus_aculeatus", "parambassis_ranga", "anabas_testudineus",
+                   "scophthalmus_maximus", "mastacembelus_armatus"), colnames(d.rerio.266))
+lab.lab  <- paste(1:length(lab.i), sp.db2sp.2( colnames(d.rerio.266)[ lab.i ] ) )
+plot( genome.sizes[ colnames(d.rerio.266) ], d.rerio.266['l2',] / d.rerio.266['n',], col=d.rerio.266.col,
+     xlab='genome size', ylab='proportion retained', ylim=c(0.3, 0.85), pch=19 )
+points( genome.sizes[ colnames(d.rerio.266) ], d.rerio.266['l1',] / d.rerio.266['n',], col=d.rerio.266.col, pch=1 )
+legend( 'bottomright', legend=c('D. rerio', 'other'), pch=c(1,19), cex=0.8, box.col='black' )
+with(par(), mtext("A", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+text( genome.sizes[ colnames(d.rerio.266[,lab.i]) ], d.rerio.266['l2',lab.i] / d.rerio.266['n',lab.i], pos=1 )
+plot( d.rerio.266['l1.2',] / d.rerio.266['n',], d.rerio.266['o.e',], xlab='proportion retained (union)', ylab='observed/expected',
+     col=d.rerio.266.col, pch=19)
+text( d.rerio.266['l1.2',lab.i] / d.rerio.266['n',lab.i], d.rerio.266['o.e',lab.i], pos=c(1, 3, 1, 1, 3, 3, 3, 1) )
+lab.w  <- max( strwidth( lab.lab, cex=0.8 ) )
+with(par(), text(usr[1] + lab.w * 0.1, usr[3] + lab.w * 0.1, paste(lab.lab, collapse='\n'), adj=c(0, 0), cex=0.8) )
+with(par(), mtext("B", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+## and the enrichment plots
+plot( genome.sizes[ colnames(d.rerio.266) ], -log10(1e-320 + d.rerio.266['p',]), xlab='genome size', ylab='-log10 p', col=d.rerio.266.col, pch=19 )
+text( genome.sizes[ colnames(d.rerio.266[,lab.i]) ], -log10(1e-320 + d.rerio.266['p',lab.i]), pos=1 )
+with(par(), mtext("C", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+plot( ex.align.2.k2[ 'danio_rerio', colnames(d.rerio.266) ], -log10(1e-320 + d.rerio.266['p',]),
+     xlab='Kimura distance', ylab='-log10 p', col=d.rerio.266.col, pch=19 )
+with(par(), mtext("D", cex=mt.cex, at=usr[1],, adj=1, line=0.2))
+text( ex.align.2.k2[ 'danio_rerio', colnames(d.rerio.266[,lab.i]) ], -log10(1e-320 + d.rerio.266['p',lab.i]), pos=1 )
+plot( genome.sizes[ colnames(d.rerio.266) ], d.rerio.266['o.e',], xlab='genome size', ylab='observed / expected', col=d.rerio.266.col, pch=19 )
+with(par(), mtext("E", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+text( genome.sizes[ colnames(d.rerio.266[,lab.i]) ], d.rerio.266['o.e',lab.i], pos=1 )
+plot( ex.align.2.k2[ 'danio_rerio', colnames(d.rerio.266) ], d.rerio.266['o.e',], xlab='Kimura distance',
+     ylab='', col=d.rerio.266.col, pch=19 )
+with(par(), mtext("F", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+text( ex.align.2.k2[ 'danio_rerio', colnames(d.rerio.266[,lab.i]) ], d.rerio.266['o.e',lab.i], pos=1 )
+dev.off()
+
+## Then do the same for a couple of species with smaller genomes
+e.elec.266  <- sapply( desc.266.dr, function(x){ long.enrichment(80, 80, ancestor=266, d1=9, x)})
+colnames(e.elec.266)  <- ex.align.2.k2.nj$tip.label[ desc.266.dr ] 
+
+sp  <- colnames(e.elec.266)
+
+cairo_pdf("selective_retention_3.pdf", width=half.w * pdf.m, height=half.w * pdf.m * 1.25 )
+par(mfrow=c(3,2))
+par(mar=c(5.1, 4.1, 0.4, 1.1))
+par(oma=c(0, 0, 2.1, 1.0))
+## What proportion are retained as long?
+e.elec.266.col  <- 'black'
+lab.i  <- match( c("tetraodon_nigroviridis", "takifugu_rubripes", "betta_splendens", "gasterosteus_aculeatus", "parambassis_ranga", "anabas_testudineus",
+                   "scophthalmus_maximus", "mastacembelus_armatus"), colnames(e.elec.266))
+lab.lab  <- paste(1:length(lab.i), sp.db2sp.2( colnames(e.elec.266)[ lab.i ] ) )
+plot( genome.sizes[ colnames(e.elec.266) ], e.elec.266['l2',] / e.elec.266['n',], col=e.elec.266.col,
+     xlab='genome size', ylab='proportion retained', ylim=c(0.3, 0.75), pch=19 )
+points( genome.sizes[ colnames(e.elec.266) ], e.elec.266['l1',] / e.elec.266['n',], col=e.elec.266.col, pch=1 )
+legend( 'bottomright', legend=c('E. electrophorus', 'other'), pch=c(1,19), cex=0.8, box.col='black' )
+with(par(), mtext("A", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+text( genome.sizes[ colnames(e.elec.266[,lab.i]) ], e.elec.266['l2',lab.i] / e.elec.266['n',lab.i], pos=1 )
+plot( e.elec.266['l1.2',] / e.elec.266['n',], e.elec.266['o.e',], xlab='proportion retained (union)', ylab='observed/expected',
+     col=e.elec.266.col, pch=19)
+text( e.elec.266['l1.2',lab.i] / e.elec.266['n',lab.i], e.elec.266['o.e',lab.i], pos=c(1, 3, 1, 1, 3, 3, 3, 1) )
+lab.w  <- max( strwidth( lab.lab, cex=0.8 ) )
+with(par(), text(usr[1] + lab.w * 0.1, usr[3] + lab.w * 0.1, paste(lab.lab, collapse='\n'), adj=c(0, 0), cex=0.8) )
+with(par(), mtext("B", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+## and the enrichment plots
+plot( genome.sizes[ colnames(e.elec.266) ], -log10(1e-320 + e.elec.266['p',]), xlab='genome size', ylab='-log10 p', col=e.elec.266.col, pch=19 )
+text( genome.sizes[ colnames(e.elec.266[,lab.i]) ], -log10(1e-320 + e.elec.266['p',lab.i]), pos=1 )
+with(par(), mtext("C", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+plot( ex.align.2.k2[ 'electrophorus_electricus', colnames(e.elec.266) ], -log10(1e-320 + e.elec.266['p',]),
+     xlab='Kimura distance', ylab='-log10 p', col=e.elec.266.col, pch=19 )
+with(par(), mtext("D", cex=mt.cex, at=usr[1],, adj=1, line=0.2))
+text( ex.align.2.k2[ 'electrophorus_electricus', colnames(e.elec.266[,lab.i]) ], -log10(1e-320 + e.elec.266['p',lab.i]), pos=1 )
+plot( genome.sizes[ colnames(e.elec.266) ], e.elec.266['o.e',], xlab='genome size', ylab='observed / expected', col=e.elec.266.col, pch=19 )
+with(par(), mtext("E", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+text( genome.sizes[ colnames(e.elec.266[,lab.i]) ], e.elec.266['o.e',lab.i], pos=1 )
+plot( ex.align.2.k2[ 'electrophorus_electricus', colnames(e.elec.266) ], e.elec.266['o.e',], xlab='Kimura distance',
+     ylab='', col=e.elec.266.col, pch=19 )
+with(par(), mtext("F", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+text( ex.align.2.k2[ 'electrophorus_electricus', colnames(e.elec.266[,lab.i]) ], e.elec.266['o.e',lab.i], pos=1 )
+dev.off()
+
+
+d.clup.266  <- sapply( desc.266.dr, function(x){ long.enrichment(80, 80, ancestor=266, d1=10, x)})
+colnames(d.clup.266)  <- ex.align.2.k2.nj$tip.label[ desc.266.dr ] 
+
+sp  <- colnames(d.clup.266)
+
+cairo_pdf("selective_retention_4.pdf", width=half.w * pdf.m, height=half.w * pdf.m * 1.25 )
+par(mfrow=c(3,2))
+par(mar=c(5.1, 4.1, 0.4, 1.1))
+par(oma=c(0, 0, 2.1, 1.0))
+## What proportion are retained as long?
+d.clup.266.col  <- 'black'
+lab.i  <- match( c("tetraodon_nigroviridis", "takifugu_rubripes", "betta_splendens", "gasterosteus_aculeatus", "parambassis_ranga", "anabas_testudineus",
+                   "scophthalmus_maximus", "mastacembelus_armatus"), colnames(d.clup.266))
+lab.lab  <- paste(1:length(lab.i), sp.db2sp.2( colnames(d.clup.266)[ lab.i ] ) )
+plot( genome.sizes[ colnames(d.clup.266) ], d.clup.266['l2',] / d.clup.266['n',], col=d.clup.266.col,
+     xlab='genome size', ylab='proportion retained', ylim=c(0.3, 0.75), pch=19 )
+points( genome.sizes[ colnames(d.clup.266) ], d.clup.266['l1',] / d.clup.266['n',], col=d.clup.266.col, pch=1 )
+legend( 'bottomright', legend=c('D. clupeoides', 'other'), pch=c(1,19), cex=0.8, box.col='black' )
+with(par(), mtext("A", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+text( genome.sizes[ colnames(d.clup.266[,lab.i]) ], d.clup.266['l2',lab.i] / d.clup.266['n',lab.i], pos=1 )
+plot( d.clup.266['l1.2',] / d.clup.266['n',], d.clup.266['o.e',], xlab='proportion retained (union)', ylab='observed/expected',
+     col=d.clup.266.col, pch=19)
+text( d.clup.266['l1.2',lab.i] / d.clup.266['n',lab.i], d.clup.266['o.e',lab.i], pos=c(1, 3, 1, 1, 3, 3, 3, 1) )
+lab.w  <- max( strwidth( lab.lab, cex=0.8 ) )
+with(par(), text(usr[1] + lab.w * 0.1, usr[3] + lab.w * 0.1, paste(lab.lab, collapse='\n'), adj=c(0, 0), cex=0.8) )
+with(par(), mtext("B", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+## and the enrichment plots
+plot( genome.sizes[ colnames(d.clup.266) ], -log10(1e-320 + d.clup.266['p',]), xlab='genome size', ylab='-log10 p', col=d.clup.266.col, pch=19 )
+text( genome.sizes[ colnames(d.clup.266[,lab.i]) ], -log10(1e-320 + d.clup.266['p',lab.i]), pos=1 )
+with(par(), mtext("C", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+plot( ex.align.2.k2[ 'denticeps_clupeoides', colnames(d.clup.266) ], -log10(1e-320 + d.clup.266['p',]),
+     xlab='Kimura distance', ylab='-log10 p', col=d.clup.266.col, pch=19 )
+with(par(), mtext("D", cex=mt.cex, at=usr[1],, adj=1, line=0.2))
+text( ex.align.2.k2[ 'denticeps_clupeoides', colnames(d.clup.266[,lab.i]) ], -log10(1e-320 + d.clup.266['p',lab.i]), pos=1 )
+plot( genome.sizes[ colnames(d.clup.266) ], d.clup.266['o.e',], xlab='genome size', ylab='observed / expected', col=d.clup.266.col, pch=19 )
+with(par(), mtext("E", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+text( genome.sizes[ colnames(d.clup.266[,lab.i]) ], d.clup.266['o.e',lab.i], pos=1 )
+plot( ex.align.2.k2[ 'denticeps_clupeoides', colnames(d.clup.266) ], d.clup.266['o.e',], xlab='Kimura distance',
+     ylab='', col=d.clup.266.col, pch=19 )
+with(par(), mtext("F", cex=mt.cex, at=usr[1], adj=1, line=0.2))
+text( ex.align.2.k2[ 'denticeps_clupeoides', colnames(d.clup.266[,lab.i]) ], d.clup.266['o.e',lab.i], pos=1 )
+dev.off()
 
 

@@ -10,6 +10,9 @@ a4.h <- 11.69
 pdf.m <- 1.6
 mt.cex <- 2
 
+half.w <- a4.w * 85 / 210
+full.w <- a4.w * 170 / 210
+
 ## genome sizes
 tmp <- read.table("../R_172_genomes/genome_sizes.txt")
 genome.sizes <- tmp[,1]
@@ -323,17 +326,18 @@ saveRDS( sp.class.3, "sp_class_3.rds" )
 
 ## it is then possible to draw:
 cairo_pdf("exon_based_nj_tree.pdf", width=a4.w*0.8*pdf.m, height=a4.h*0.9*pdf.m)
+par('mar'=c(0, 2.1, 0, 2.1))
 plot.new()
 with(tree.lines, plot.window(xlim=c(0, 1.5 * max(x[,1:2])),
-                             ylim=c(0, 1.02 * max(y)), xaxs='i', yaxs='i'))
+                             ylim=c(0.25, 1.01 * max(y)), xaxs='i', yaxs='i'))
 with(tree.lines, segments(x[,1], y, x[,2], y, col=nodes.col[x[,'p'] ] ))
 with(tree.lines, segments(v[,1], v[,2], v[,1], v[,3], col=nodes.col[v[,'node']] ))
-with(tree.lines, text( x[,2] + strwidth("9", cex=0.4), y, labels=nodes, adj=c(0,0.5), cex=0.4))
+with(tree.lines, text( x[,2] + strwidth("9", cex=0.6), y, labels=nodes, adj=c(0,0.5), cex=0.6))
 with(tree.lines, {
     b <- !(nodes %in% ex.align.2.k2.nj$edge[,1])
-    offset <- strwidth("9999", cex=0.4) * 1.25
+    offset <- strwidth("9999", cex=0.6) * 1.25
     text( x[b,2] + offset, y[b], uc.1(sp.db2sp(ex.align.2.k2.nj$tip.label[ nodes[b] ])),
-         cex=0.5, adj=c(0,0.5) )
+         cex=0.6, adj=c(0,0.5) )
     })
 legend('bottomleft', legend=names(class.col.3), text.col=class.col.3, box.lty=0,
        inset=c(0,0.05))
@@ -705,7 +709,7 @@ legend('topright', legend=c('Teleost', 'Mammal', 'Sauria'),
 with(par(), mtext('B', at=usr[1], cex=mt.cex))
 dev.off()
 
-cairo_pdf("Mutual_info_figure_2.pdf", width=a4.w * 0.9 * pdf.m, height=a4.w * 0.45 * pdf.m )
+cairo_pdf("Mutual_info_figure_2.pdf", width=full.w * pdf.m, height=full.w * 0.45 * pdf.m )
 layout(matrix(c(1,2), nrow=1), widths=c(1,1))
 mi.cols <- plot.mutual.info(text.labels=FALSE, lab.cex=0.75, scale.cex=0.6,
                             y.margins=c(8,5))
@@ -1069,7 +1073,7 @@ estimate.min.length <- function(c.var, param="50%", r=1:100){
 ## That seems ok. Lets try to make a figure together with
 ## the other plots.
 
-cairo_pdf("quantiles_prediction_figure.pdf", width=a4.w * 0.9 * pdf.m, height=a4.w * 0.6 * pdf.m )
+cairo_pdf("quantiles_prediction_figure.pdf", width=full.w * pdf.m, height=full.w * 0.6 * pdf.m )
 par(mfrow=c(2,3))
 plot( tel.var[,'50%'], mam.var[,'50%'], cex=0.5, xaxs='i', yaxs='i',
      xlab='', ylab='', col=rgb(0,0,0,0.2))

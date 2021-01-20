@@ -157,6 +157,12 @@ a4.h <- 11.69
 pdf.m <- 1.6
 mt.cex <- 2
 
+## Genome biology uses 85 and 170 mm wide figures
+half.w <- a4.w * 85 / 210
+full.w <- a4.w * 170 / 210
+## this is the maximum height including legend.
+max.h <- 225 / 25.4
+
 pdf("species_intron_size_distributions.pdf", width=a4.w, height=a4.h,
     title='Intron size distributions')
 par(omi=c(0.5, 0.5, 0.5, 0.5))
@@ -320,7 +326,7 @@ plot.small.r.2 <- function(int.s.r.1=all.not.first.intron.s.n,
     segments(x, y1, x, y2) 
     legend('topright', legend=c('Teleosts', 'Mammals', 'Sauria', 'others'),
            pch=pch2, col=sort(unique(cols), decreasing=TRUE))
-    legend('topright', legend=c('rank > 1','rank = 1' ), pch=c(pch1, pch2), inset=c(0,0.25),
+    legend('topright', legend=c('rank > 1','rank = 1' ), pch=c(pch1, pch2), inset=c(0.2,0),
            bty='n')
 }
 
@@ -379,7 +385,10 @@ names(mammal.col) <- names(genome.sizes[ sp.class[,'mammal'] ])
 sauria.col <- hsvScale( log2(genome.sizes[ sp.class[,'sauria'] ]))
 names(sauria.col) <- names(genome.sizes[ sp.class[,'sauria'] ])
 
-cairo_pdf("intron_size_distribution_summary.pdf", width=a4.w * 0.6 * pdf.m, height=a4.h * 0.6 * pdf.m )
+
+
+cairo_pdf("intron_size_distribution_summary.pdf", width=half.w * pdf.m,
+          height=half.w * 1.4 * pdf.m )
 ##par(mfrow=c(2,2))
 layout(matrix(c(1,2,3,4,5,5), ncol=2, byrow=TRUE))
 hist.summary.plot(sp[b & sp.class[,'teleost']], xlim=c(4.5, 20), draw.means=FALSE, cols=tel.col,

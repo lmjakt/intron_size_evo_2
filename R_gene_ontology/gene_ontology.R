@@ -4,6 +4,9 @@ a4.h <- 11.69
 pdf.m <- 1.6
 mt.cex <- 2
 
+full.w <- a4.w * 170 / 210
+half.w <- a4.w * 85 / 210
+
 source("~/R/general_functions.R")
 
 
@@ -531,31 +534,38 @@ plot.stat.summary <- function(stats, par, n, cols=hsvScale(1:n, val=0.5),
 }
 
 plot.labels <- function(labels, n, cols=hsvScale(1:n, val=0.5), cex=1,
-                        adj=c(1,1)){
+                        adj=c(1,0)){
     old.mar <- par('mar')
     mar <- old.mar
     mar[c(1,3)] <- c(1.1, 0)
     par('mar'=mar)
     plot.new()
     plot.window(xlim=0:1, ylim=0:1, yaxs='i')
-    h <- max(strheight(labels, cex=cex)) * 1.5
-    text(1, 1 - 1:n * h, labels[1:n], col=cols, cex=cex,
+    ## Unfortunately we need to be able to wrap some of the terms
+    lab.w <- sapply( labels, function(x){
+        w <- strwidth(x, cex=cex)
+        wrap.col <- nchar(x) / (1.05 * w)
+        paste( strwrap(x, width=wrap.col), collapse="\n" )
+    })
+    h <- max(strheight(labels, cex=cex)) * 0.75
+    y <- c(0, cumsum( rowSums( cbind( h, strheight(lab.w) ))))[ -length(lab.w) ]
+    text(1, 1 - y[1:n], lab.w[1:n], col=cols, cex=cex,
               adj=adj)
     par(mar=old.mar)
 }
 
-lab.cex <- 0.75
-cairo_pdf("GO_pval_summary.pdf", width=a4.w * pdf.m * 0.8, height=a4.w * pdf.m * 0.4 )
+lab.cex <- 1
+cairo_pdf("GO_pval_summary.pdf", width=full.w * pdf.m, height=full.w * pdf.m * 0.5 )
 layout(matrix(1:6, nrow=2), heights=c(1, 0.45))
 plot.stat.summary( bp.sum.stats, 'p', 10, ylab='-log10 p')
 with(par(), mtext("A", line=1, cex=mt.cex, at=usr[1]))
-plot.labels(bp.sum$Term, 10, adj=c(1, 0), cex=lab.cex)
+plot.labels(bp.sum$Term, 10, adj=c(1, 1), cex=lab.cex)
 plot.stat.summary( mf.sum.stats, 'p', 8, ylab='-log10 p')
 with(par(), mtext("B", line=1, cex=mt.cex, at=usr[1]))
-plot.labels(mf.sum$Term, 8, adj=c(1, 0), cex=lab.cex)
+plot.labels(mf.sum$Term, 8, adj=c(1, 1), cex=lab.cex)
 plot.stat.summary( cc.sum.stats, 'p', 10, ylab='-log10 p' )
 with(par(), mtext("C", line=1, cex=mt.cex, at=usr[1]))
-plot.labels(cc.sum$Term, 10, adj=c(1, 0), cex=lab.cex)
+plot.labels(cc.sum$Term, 10, adj=c(1, 1), cex=lab.cex)
 dev.off()
 
 
