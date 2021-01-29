@@ -245,6 +245,29 @@ draw.delta.lines <- function(m, cols=nodes.col, ...){
     c('x'=x[l], 'y'=y[l])
 }
 
+draw.descendants <- function(m, ancestor, ...){
+    b <- m[,'node'] == ancestor
+    if(sum(b) == 0)
+        return
+    m <- m[as.logical(cumsum(b)), , drop=FALSE]
+    if(nrow(m) > 1){
+        x <- m[,'pg']
+        y <- m[,'int.d']
+        l <- length(x)
+        segments( x[1:(l-1)], y[1:(l-1)], x[2:l], y[2:l], ...)
+    }
+}
+
+label.nodes <- function(m, nodes, offset=c(0, 0), ...){
+    m <- m[ m[,'node'] %in% nodes , , drop=FALSE]
+    with(par(),
+         text( m[,1] + offset[1] * diff(usr[1:2]),
+               m[,2] + offset[2] * diff(usr[3:4]),
+               m[,'node'], ... )
+         )
+}
+    
+
 ## we can put labels at places that are of interest
 label.i <- which( names(leaf.int.d) %in%
                   c('danio rerio', 'tetraodon nigroviridis', 'betta splendens',
@@ -324,48 +347,65 @@ leaf.int.2.d <- lapply( 1:leaf.n, function(i){
 names(leaf.int.2.d) <- colnames( int.s.l )
 
 ## we can put labels at places that are of interest
-label.i <- which( names(leaf.int.d) %in%
-                  c('danio rerio', 'tetraodon nigroviridis', 'betta splendens',
-                    'astyanax mexicanus', 'erpetoichthys calabaricus', 'latimeria chalumnae',
-                    'sphenodon punctatus', 'pygocentrus nattereri','eptatretus burgeri',
-                    'takifugu rubripes', 'xenopus tropicalis', 'callorhinchus milii',
-                    'lepisosteus oculatus', 'gasterosteus aculeatus', 'parambassis ranga',
-                    'electrophorus electricus', 'denticeps clupeoides',
-                    'myotis lucifugus', 'pteropus vampyrus', 'coturnix japonicus',
-                    'apteryx rowi', 'coturnix japonica',
-                    'meleagris gallopavo'))
+label.sp <- c('danio rerio', 'tetraodon nigroviridis', 'betta splendens',
+              'astyanax mexicanus', 'erpetoichthys calabaricus', 'latimeria chalumnae',
+              'sphenodon punctatus', 'pygocentrus nattereri','eptatretus burgeri',
+              'anabas testudineus', 'scophthalmus maximus', 'mastacembelus armatus', 'mola mola',
+              'takifugu rubripes', 'xenopus tropicalis', 'callorhinchus milii',
+              'lepisosteus oculatus', 'gasterosteus aculeatus', 'parambassis ranga',
+              'electrophorus electricus', 'denticeps clupeoides',
+              'myotis lucifugus', 'pteropus vampyrus', 'coturnix japonicus',
+              'apteryx rowi', 'coturnix japonica',
+              'meleagris gallopavo')
 
 
 xlim <- range( unlist(lapply( leaf.int.2.d, function(x){ x[,'pg'] })) )
+x.max <- xlim[2]
 xlim[2] <- 1.2 * xlim[2]
 xlim[1] <- 0
 ylim <- range( unlist(lapply( leaf.int.2.d, function(x){ x[,'int.d'] })) )
 
 cairo_pdf("Intron_size_evolution.pdf", width=half.w * pdf.m, height=max.h*0.75*pdf.m)
+sp.cex <- 0.75
 par(mar=c(1.1, 3.1, 1.1, 1.1))
 plot.new()
 plot.window(xlim=xlim, ylim=ylim, xaxs='i')
 abline(h=0, col='grey')
 ends <- sapply(leaf.int.2.d, draw.delta.lines, lwd=2)
+leaf.int.2.d.nodes <- unique( unique( do.call( rbind, leaf.int.2.d ) ))
+sapply( leaf.int.2.d, draw.descendants, ancestor=288, col=rgb(1, 1, 1), lwd=0.25 )
+label.nodes( leaf.int.2.d.nodes, c(288, 266, 267, 276 ), adj=c(1, 0.5), offset=c(-0.01, 0), cex=sp.cex )
 axis(2)
 with( leaf.int.2.d, {
-    o <- order( ends[2,label.i] )
-    x <- (ends[1,label.i])[o]
+    ends <- ends[ , order(ends[2,]) ]
+    label.i <- which( colnames(ends) %in% label.sp )
+    label.sp <- sub(" ", "_", colnames(ends)[ label.i ])
+    labels <- uc.1(colnames(ends)[label.i])
+    label.col <- sp.col.3[ label.sp ]
+    ends.x <- sapply(1:ncol(ends), function(i){
+        b <- abs( ends[2,] - ends[2,i] ) <= (strheight('A', cex=sp.cex) * 0.6)
+        max( ends[1, b] )
+    })
+    x <- ends.x[label.i]
+##    x <- ends[1,label.i]
     y <- sort(ends[2,label.i])
+    y.o <- y
     y.d <- diff(y)
-    y.d.i <- which(y.d < 1.1 * strheight( 'A', cex=0.8 ) )
+    y.d.i <- which(y.d < 1.1 * strheight( 'A', cex=sp.cex ) )
     count <- 0
     while(length(y.d.i) && count < 20){
-        y[ y.d.i ] <- y[y.d.i] - strheight('A') * 0.25
-        y[ y.d.i + 1] <- y[y.d.i + 1] + strheight('A') * 0.25
+        y[ y.d.i ] <- y[y.d.i] - strheight('A', cex=sp.cex) * 0.25
+        y[ y.d.i + 1] <- y[y.d.i + 1] + strheight('A', cex=sp.cex) * 0.25
         y.d <- diff(y)
-        y.d.i <- which(y.d < 1.1 * strheight( 'A', cex=0.8 ) )
+        y.d.i <- which(y.d < 1.1 * strheight( 'A', cex=sp.cex ) )
         count <- count + 1
     }
-    text( x, y, uc.1(colnames(ends)[label.i])[o], pos=4,
-     col=nodes.col[label.i[o]], cex=0.8) })
+    text( x + diff(xlim) * 0.01, y, labels, adj=c(0,0.5),
+         col=label.col, cex=sp.cex)
+    segments( ends[1, label.i], y.o, x + diff(xlim) * 0.01, y, lty="12", lwd=1, lend=2 )
+    })
 legend('bottomleft', legend=names(class.col.3), text.col=class.col.3, box.lty=0,
-       inset=c(0.01,0.05))
+       inset=c(0.01,0.05), bg=NA)
 dev.off()
 
 identify( t(ends), labels=colnames(ends))

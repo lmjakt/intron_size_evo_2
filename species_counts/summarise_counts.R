@@ -70,8 +70,8 @@ make.table <- function( df, sep.width=2 ){
     c(header,  sep.row, rows)
 }
 
-chord.md <- make.table( chord.s )
-act.md <- make.table( act.s )
+chord.md <- make.table( chord.s[ order(chord.s$n, decreasing=TRUE), ] )
+act.md <- make.table( act.s[ order(act.s$n, decreasing=TRUE), ] )
 
 writeLines( chord.md, "chordate_vertebrate_counts.md" )
 writeLines( act.md, "actinopterygii_teleost_counts.md" )
