@@ -712,7 +712,7 @@ dev.off()
 cairo_pdf("Mutual_info_figure_2.pdf", width=full.w * pdf.m, height=full.w * 0.45 * pdf.m )
 layout(matrix(c(1,2), nrow=1), widths=c(1,1))
 mi.cols <- plot.mutual.info(text.labels=FALSE, lab.cex=0.75, scale.cex=0.6,
-                            y.margins=c(8,5))
+                            y.margins=c(8,5), x.margins=c(18, 0))
 with(par(), mtext('A', at=usr[1], cex=mt.cex, line=-1))
 ##
 par(mar=c(4.1, 4.1, 2.1, 2.1))
