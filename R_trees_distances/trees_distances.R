@@ -31,6 +31,7 @@ seq.region <- seq.region[ names(genome.sizes) ]
 genome.n50 <- sapply( names(genome.sizes), function(nm){
     N50( seq.region[[nm]], genome.sizes[nm], 0.5) })
 
+saveRDS(genome.n50, "genome_n50.rds")
 
 rm.diagonal <- function(m){
     for(i in 1:nrow(m))
@@ -297,6 +298,10 @@ teleost.nodes <- nodes.descend( ex.align.2.k2.nj, 266 )
 aves.nodes <- nodes.descend( ex.align.2.k2.nj, 268 )
 sauria.nodes <- nodes.descend( ex.align.2.k2.nj, 247 )
 
+saveRDS( list(mammalia=mammalia.nodes, eutheria=eutheria.nodes,
+              teleostei=teleost.nodes, sauria=sauria.nodes, aves=aves.nodes),
+        "clade_nodes.rds" )
+
 #nodes.col <- rgb(teleost.nodes | eutheria.nodes, aves.nodes, theria.nodes)
 class.col.3 <- rgb( c(0, 0, 0.6, 0.8, 0, 0), c(0, 0, 0, 0, 0.8, 0.6), c(0, 0.8, 0.6, 0, 0, 0.6))
 names(class.col.3) <- c('others', 'mammalia', 'eutheria', 'teleostei', 'sauria', 'aves')
@@ -310,6 +315,8 @@ nodes.col[ eutheria.nodes ] <- rgb(0.6, 0, 0.6)
 nodes.col[ teleost.nodes  ] <- rgb(0.8, 0, 0)
 nodes.col[ sauria.nodes ] <- rgb(0, 0.8, 0)
 nodes.col[ aves.nodes ] <- rgb(0, 0.6, 0.6)
+
+saveRDS( nodes.col, "nodes_col.rds" )
 
 ## I do not remember exaclty why this works, but it is somewher in the details
 ## of the parsing of the tree.
@@ -354,7 +361,8 @@ sp.y <- with(tree.lines, {
 })
 
 saveRDS( sp.y, "sp_y.rds" )
-
+saveRDS( tree.lines, "tree_lines.rds")
+saveRDS( ex.align.2.k2.nj, "ex_align_2_k2_nj.rds" )
 ## The inferred intron lengths are in:
 
 int.s.inf <- readRDS("../R_172_genomes/int_s_inf.rds") ## which is a big data set..

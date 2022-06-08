@@ -322,6 +322,7 @@ int.s.2.enc <- encode.dist( int.s.l * 10, offset=al.2.offset )
 int.s.inf.2 <- sankoff( nj.edge, c(total.nodes, leaf.n), sub.matrix.2, c(al.2.offset, al.2.size),
                        int.s.2.enc, check.states=FALSE )
 
+saveRDS( int.s.inf.2, "int_s_inf_2.rds)"
 ## this differs from the version in ../R_172_genomes/ in that we only
 ## use reasonable intron sizes
 leaf.int.2.d <- lapply( 1:leaf.n, function(i){
