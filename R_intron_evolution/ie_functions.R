@@ -1309,3 +1309,49 @@ clade.KL <- function(root, tree=ex.align.2.k2.nj, int.s=orth$l, inf=int.s.inf.2,
     names(leaves.kl) <- leaves$names
     list('root'=root.kl, 'leaves'=leaves.kl)
 }
+
+## a wrapper around discretize2d and mi.plugin
+## requires entropy
+mutual.info <- function(x, y, nbins1, nbins2=nbins1){
+    f2d <- discretize2d( x, y, numBins1=nbins1, numBins2=nbins2 )
+    mi.plugin( f2d )
+}
+
+## stats discretised by the level in x or y:
+stats.discretise <- function(sp1, sp2.root, tree=ex.align.2.k2.nj, brk.l=4,
+                             exclude.sp=names(int.s.b[!int.s.b]) ){
+    sp2 <- collect.leaves(sp2.root, tree=tree)$names
+    sp2 <- sp2[ !(sp2 %in% c(sp1, exclude.sp)) ]
+    stats <- lapply( sp2, function(sp){
+        b <- with(orth, l[,sp1] >= 76 & l[,sp] >= 76)
+        b[ is.na(b) ] <- FALSE
+        x <- log2(orth$l[b,sp1])
+        y <- log2(orth$l[b,sp])
+        ## restrict to the 99th quantile:
+        b <- x <= quantile(x, 0.99) & y <= quantile(y, 0.99)
+        x <- x[ b ]
+        y <- y[ b ]
+        if(length(brk.l) == 1){
+            x.brk <- seq(min(x), max(x), length.out=brk.l)
+            y.brk <- seq(min(y), max(y), length.out=brk.l)
+        }else{
+            x.brk <- brk.l
+            y.brk <- brk.l
+        }
+        b <- x >= min(x.brk) & x <= max(x.brk) & y >= min(y.brk) & y <= max(y.brk)
+        x <- x[b]
+        y <- y[b]
+        x.l <- cut(x, breaks=x.brk, include.lowest=TRUE)
+        y.l <- cut(y, breaks=y.brk, include.lowest=TRUE)
+        cor.all <- cor(x, y)
+        mi.all <- mutual.info(x, y, nbins1=20)
+        cor.x <- tapply( 1:length(x), x.l, function(i){ cor(x[i], y[i]) })
+        cor.y <- tapply( 1:length(y), y.l, function(i){ cor(x[i], y[i]) })
+        mi.x <-  tapply( 1:length(x), x.l, function(i){ mutual.info(x[i], y[i], nbins1=10) })
+        mi.y <-  tapply( 1:length(y), y.l, function(i){ mutual.info(x[i], y[i], nbins1=10) })
+        list(cor.x=cor.x, cor.y=cor.y, mi.x=mi.x, mi.y=mi.y, x.brk=x.brk, y.brk=y.brk,
+             x.n=table(x.l), y.n=table(y.l), cor.all=cor.all, mi.all=mi.all)
+    })
+    names(stats) <- sp2
+    stats
+}

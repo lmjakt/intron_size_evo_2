@@ -381,109 +381,7 @@ for(i in c(61, 75, 108, 127, 107, 118, 155)){
 }
 
 
-tmp3 <- diff.2d(266, 3, inf=int.s.inf.2 )
-tmp3$pt <- with(tmp3, cbind(pt, d.adj=pt[,3] + (pt[,1] - min(pt[,1]))))
 
-
-tmp1.sh <- hist( tmp1$pt[,2], breaks=50 )
-tmp1.dh1 <- hist( tmp1$pt[,3], breaks=50 )
-par(mfrow=c(2,3))
-tmp1.h <- hist.divided( tmp1$pt[,2], tmp1$pt[,1], x.n=6, breaks=tmp1.sh$breaks, plot=TRUE )
-
-
-tmp2.sh <- hist( tmp2$pt[,2], breaks=50 )
-tmp2.dh <- hist( tmp2$pt[,3], breaks=50 )
-tmp2.dh2 <- hist( tmp2$pt[,4], breaks=50 )
-par(mfrow=c(2,3))
-tmp2.h <- hist.divided( tmp2$pt[,2], tmp2$pt[,1], x.n=6, breaks=tmp2.sh$breaks, plot=TRUE )
-tmp2.h <- hist.divided( tmp2$pt[,3], tmp2$pt[,1], x.n=6, breaks=tmp2.dh$breaks, plot=TRUE )
-tmp2.h <- hist.divided( tmp2$pt[,4], tmp2$pt[,1], x.n=6, breaks=tmp2.dh2$breaks, plot=TRUE )
-
-tmp3.sh <- hist( tmp3$pt[,2], breaks=50 )
-tmp3.dh <- hist( tmp3$pt[,3], breaks=50 )
-tmp3.dh2 <- hist( tmp3$pt[,4], breaks=50 )
-
-par(mfrow=c(3,4))
-tmp3.h <- hist.divided( tmp3$pt[,2], tmp3$pt[,1], x.n=12, breaks=tmp3.sh$breaks, plot=TRUE )
-tmp3.h <- hist.divided( tmp3$pt[,3], tmp3$pt[,1], x.n=12, breaks=tmp3.dh$breaks, plot=TRUE )
-tmp3.h <- hist.divided( tmp3$pt[,4], tmp3$pt[,1], x.n=12, breaks=tmp3.dh2$breaks, plot=TRUE )
-
-
-
-tmp2.h <- hist.divided( tmp2$pt[,3], tmp2$pt[,1], x.n=6, breaks=tmp2.dh1$breaks, plot=FALSE )
-
-par(mfrow=c(2,3))
-tmp.h <- hist.divided( tmp2$pt[,3], tmp2$pt[,1], x.n=6, breaks=tmp.dh1$breaks, plot=TRUE )
-
-
-
-
-
-par(mfrow=c(3,4))
-tmp.h <- hist.divided( tmp$pt[,3], tmp$pt[,1], x.n=12, breaks=tmp.dh1$breaks, plot=TRUE )
-
-tmp.dh <- hist(tmp$pt[,4], breaks=50)
-par(mfrow=c(3,4))
-tmp.h <- hist.divided( tmp$pt[,4], tmp$pt[,1], x.n=12, breaks=tmp.dh2$breaks, plot=TRUE )
-
-### more simply, just plot ancestor vs descendant..
-
-## 26 and 29 are Oryzias (medaka variants)
-## 44 and 105 are esox lucius and hucho hucho respectively
-tmp1 <- hist.2d( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[78]]$state[,1] )
-tmp2 <- hist.2d( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[2]]$state[,1] )
-tmp3 <- hist.2d( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[3]]$state[,1] )
-tmp4 <- hist.2d( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[29]]$state[,1] )
-tmp5 <- hist.2d( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[26]]$state[,1] )
-tmp6 <- hist.2d( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[44]]$state[,1] )
-tmp7 <- hist.2d( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[105]]$state[,1] )
-
-
-par(mfrow=c(3,4))
-plot( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[78]]$state[,1], col=rgb(0,0,0,0.1), cex=0.5, xlim=c(60, 170), ylim=c(60, 170))
-abline(0,1, col='red', lty=2)
-with(tmp1, image(x, y, h, col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp1, image(x, y, sweep(h, 1, apply(h, 1, max), "/"), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp1, image(x, y, t(scale(t(h))), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-
-plot( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[2]]$state[,1], col=rgb(0,0,0,0.1), cex=0.5, xlim=c(60, 170), ylim=c(60, 170))
-abline(0,1, col='red', lty=2)
-with(tmp2, image(x, y, h, col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp2, image(x, y, sweep(h, 1, apply(h, 1, max), "/"), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp2, image(x, y, t(scale(t(h))), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-
-plot( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[2]]$state[,1], col=rgb(0,0,0,0.1), cex=0.5, xlim=c(60, 170), ylim=c(60, 170))
-abline(0,1, col='red', lty=2)
-with(tmp3, image(x, y, h, col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp3, image(x, y, sweep(h, 1, apply(h, 1, max), "/"), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp3, image(x, y, t(scale(t(h))), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-
-par(mfrow=c(3,4))
-plot( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[29]]$state[,1], col=rgb(0,0,0,0.1), cex=0.5, xlim=c(60, 170), ylim=c(60, 170))
-abline(0,1, col='red', lty=2)
-with(tmp4, image(x, y, h, col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-##with(tmp4, image(x, y, sqrt(h), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-##with(tmp4, image(x, y, log(h), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp4, image(x, y, sweep(h, 1, apply(h, 1, max), "/"), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp4, image(x, y, t(scale(t(h))), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-
-plot( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[26]]$state[,1], col=rgb(0,0,0,0.1), cex=0.5, xlim=c(60, 170), ylim=c(60, 170))
-abline(0,1, col='red', lty=2)
-with(tmp5, image(x, y, h, col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp5, image(x, y, sweep(h, 1, apply(h, 1, max), "/"), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp5, image(x, y, t(scale(t(h))), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-
-plot( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[44]]$state[,1], col=rgb(0,0,0,0.1), cex=0.5, xlim=c(60, 170), ylim=c(60, 170))
-abline(0,1, col='red', lty=2)
-with(tmp6, image(x, y, h, col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp6, image(x, y, sweep(h, 1, apply(h, 1, max), "/"), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp6, image(x, y, t(scale(t(h))), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-
-plot( int.s.inf.2[[266]]$state[,1], int.s.inf.2[[105]]$state[,1], col=rgb(0,0,0,0.1), cex=0.5, xlim=c(60, 170), ylim=c(60, 170))
-abline(0,1, col='red', lty=2)
-with(tmp7, image(x, y, h, col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp7, image(x, y, sweep(h, 1, apply(h, 1, max), "/"), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
-with(tmp7, image(x, y, t(scale(t(h))), col=hcl.colors(256, "YlOrRd", rev=TRUE)))
 
 ##### in order to compare minimisation across the whole clade we can ask
 ##### what fraction of a given size of introns in an ancestor are minimised
@@ -1996,8 +1894,6 @@ oe <- sapply( com.d.long.10.276.256[b], function(x){ x$comb['obs'] / x$comb['exp
 names(oe) <-  leaf.276$names[b]
 gs <- log2(genome.size[ leaf.276$names[b] ])
 dd <- ex.align.2.k2[10, leaf.276$i[b]]
-##plot( gs, pp )
-##identify(gs, pp, leaf.276$names[b])
 
 par(mfrow=c(1,2))
 par(mar=c(4.1, 2.1, 2.1, 0.1))
@@ -2008,111 +1904,6 @@ plot.window( xlim=c(0, max(pp2)), ylim=td.276$usr[3:4], yaxs='i' )
 with(td.276, segments( 0, lines$y[ nodes$leaf.b ], pp2[ nodes$sp ], col=hsvScale(gs[nodes$sp]), lwd=4 ))
 axis(1)
 
-### Check the correlation of introns sizes in 276 with all extant species.
-### And maybe the correlation with the common ancestor of 10 and 276.
-leaf.276.anc.cor <- t(sapply(leaf.276$i, function(i){
-    s1 <- int.s.inf.2[[276]]$state[,1]
-    s2 <- int.s.inf.2[[i]]$state[,1]
-    b <- s1 >= 63 & s2 >= 63
-    c('n'=sum(b), 'r'=cor(s1[b], s2[b]))
-}))
-rownames(leaf.276.anc.cor) <- leaf.276$names
-
-leaf.276.266.cor <- t(sapply(leaf.276$i, function(i){
-    s1 <- int.s.inf.2[[266]]$state[,1]
-    s2 <- int.s.inf.2[[i]]$state[,1]
-    b <- s1 >= 63 & s2 >= 63
-    c('n'=sum(b), 'r'=cor(s1[b], s2[b]))
-}))
-rownames(leaf.276.266.cor) <- leaf.276$names
-
-
-plot(leaf.276.anc.cor[,'r'], pp )
-plot(leaf.276.anc.cor[,'r'], oe )
-
-plot(leaf.276.266.cor[,'r'], pp )
-plot(leaf.276.266.cor[,'r'], oe )
-
-
-plot( gs, pp2 )
-
-plot( gs, oe )
-identify(gs, oe, leaf.276$names[b])
-
-plot( dd, pp )
-plot( dd, oe )
-
-summary(lm( pp ~ gs ))  ## p <= 0.0002164
-summary(lm( pp ~ gs + dd )) ## p <= 0.0007577
-summary(lm( pp ~ dd ))  ## p <= 0.522
-
-summary(lm( oe ~ gs)) ## 0.0001375
-summary(lm( oe ~ dd)) ## 0.5361
-
-com.d.long.10.276.1024 <- lapply( leaf.276$i, function(d2){
-    common.long.by.ancestral.size( 266, 10, d2, min.s2=10*log2(1024), disc.n=2)
-})
-
-
-b <- int.s.b[ leaf.276$names ] & !(leaf.276$i %in% c(21, 6))
-pp <- -log10(sapply(com.d.long.10.276.1024[b], function(x){ x$comb['p'] }))
-oe <- sapply( com.d.long.10.276.1024[b], function(x){ x$comb['obs'] / x$comb['exp'] })
-gs <- log2(genome.size[ leaf.276$names[b] ])
-dd <- ex.align.2.k2[10, leaf.276$i[b]]
-plot( gs, pp )
-identify(gs, pp, leaf.276$names[b])
-
-plot( gs, oe )
-identify(gs, oe, leaf.276$names[b])
-
-plot( dd, pp )
-
-summary(lm( pp ~ gs ))  ## the best model.. 
-summary(lm( pp ~ gs + dd ))
-summary(lm( pp ~ dd ))
-
-summary(lm( oe ~ gs))
-summary(lm( oe ~ dd))
-
-## collate p-values across the different species
-## not really sure if the p-values can be considered as independent though
-## if we do this. Since a low p-value in one species should suggest a low
-## p-value in a closely related species..
-
-anc.s <- sort(unique(unlist( sapply( com.d.long.10.276.256, function(x){ x$df$as }))))
-
-com.d.long.10.276.256.mp <- sapply( anc.s, function(a.s){
-    p <- unlist(lapply( com.d.long.10.276.256, function(x){
-        x$df[ x$df$as == a.s, 'p' ]
-    }))
-    pchisq( -2 * sum(log(p)), df=2*length(p), lower.tail=FALSE )
-})
-
-plot(anc.s, -log10(com.d.long.10.276.256.mp), type='l')
-abline(h=c(0,1), lty=2)
-with( com.d.long.10.276.256[[35]]$df, plot(as, -log10(p), type='l') )
-abline(h=c(0,1), lty=2)
-
-com.d.long.10.276.256.moe <- sapply( anc.s, function(a.s){
-    i <- lapply( com.d.long.10.276.256, function(x){
-        which( x$df$as == a.s )
-    })
-    b <- sapply( i, length ) == 1
-    b.i <- which(b)
-    obs <- sapply( b.i, function(j){
-        with( com.d.long.10.276.256[[j]]$df, n1.2[i[[j]]] )
-    })
-    exp <- sapply( b.i, function(j){
-        with( com.d.long.10.276.256[[j]]$df,
-             n1[i[[j]]] * p2[i[[j]]] )
-    })
-    sum( obs ) / sum( exp )
-})
-
-## merging the values doesn't really make any difference to the patterns;
-## still very messy. Surprisingly, the subset of short introns that become
-## long seems to be the most strongly enriched. Maybe this is just a result of
-## a bad ancestral state inference?
 
 ## let us have a look the NCBI taxonomies
 ncbi.lin <- readRDS("../R_172_genomes/ncbi_lineages.rds")
@@ -2136,22 +1927,6 @@ all(sapply( leaf.276.taxons, function(x){ "Percomorphaceae" %in% x$name }))
 ## All (42) descendants of 276 are all members of Percomorphaceae
 ## no species are Percomorphaceae and do not descend from 276
 
-## commonality of short and long introns respectively
-tel.ci.min <- clade.shared.length( root=266, min.s=log2(76), max.s=log2(100) )
-tel.ci.short <- clade.shared.length( root=266, min.s=log2(76), max.s=8 )
-tel.ci.med <- clade.shared.length( root=266, min.s=8, max.s=16 )
-tel.ci.long <- clade.shared.length( root=266, min.s=10, max.s=16 )
-tel.ci.vlong <- clade.shared.length( root=266, min.s=11, max.s=16 )
-
-tel.ci.l1 <- list(tel.ci.min, tel.ci.short, tel.ci.med, tel.ci.long, tel.ci.vlong)
-tmp3 <- plot.shared.oe.gs( tel.ci.l1, sp.cmp='danio_rerio', cols=1:length(tel.ci.l1) )
-
-tmp <- clade.shared.length( root=266, min.s=15, max.s=16 )
-
-tel.ci.l <- lapply(1:9, function(s){
-    clade.shared.length( root=266, min.s=log2(76)+s, max.s=log2(76)+s+1 )
-})
-
 
 
 KL.266 <- clade.KL(266)
@@ -2161,10 +1936,6 @@ KL.253 <- clade.KL(253) ## almost everything that is not teleost, jawless or gar
 KL.259 <- clade.KL(259) ## all jawed vertebrates
 
 
-## the following doesn't really help..
-## so lets ignore it for now..
-## kernel <- dnorm(0:20, 0, sd=1)
-## tmp <- clade.KL(266, nbins1=40, h.tform=function(x){ blur.matrix(x, kernel) } )
 im.cols <- hcl.colors(256, "YlOrRd", rev=TRUE)
 
 cairo_pdf("KL_253_root.pdf", width=8, height=12, onefile=TRUE)
@@ -2182,7 +1953,7 @@ for(sp in names(KL.253$root)){
 }
 dev.off()
 
-
+## Example plots
 par(mfrow=c(3,2))
 ##sp1 <- 'danio_rerio'
 sp1 <- 'denticeps_clupeoides'
@@ -2204,47 +1975,6 @@ for(sp2 in names(KL.266$leaves[[sp1]])){
     input <- readline("next: ")
 }
 
-par(mfrow=c(3,2))
-##sp1 <- 'danio_rerio'
-sp1 <- 'xiphophorus_maculatus'
-for(sp2 in names(KL.276$leaves[[sp1]])){
-    with(KL.276$leaves[[sp1]][[sp2]], {
-        image(b1, b2, f2, main=sp2, col=im.cols)
-        image(b1, b2, LR, main=sp2, col=im.cols)
-        x1 <- b1[-1] - diff(b1)
-        x2 <- b2[-1] - diff(b2)
-        plot(x1, rowSums(KL), type='l', main=sp2)
-        plot.window(xlim=range(x1), ylim=range(xf))
-        lines(x1, xf, col='red')
-        plot(x2, colSums(KL), type='l', main=sp2)
-        plot.window(xlim=range(x2), ylim=range(yf))
-        lines(x2, yf, col='red')
-        plot(x1, rowSums(chi.d), type='l')
-        plot(x2, colSums(chi.d), type='l')
-    })
-    input <- readline("next: ")
-}
-
-par(mfrow=c(3,2))
-##sp1 <- 'danio_rerio'
-sp1 <- 'gallus_gallus'
-for(sp2 in names(KL.247$leaves[[sp1]])){
-    with(KL.247$leaves[[sp1]][[sp2]], {
-        image(b1, b2, f2, main=sp2)
-        image(b1, b2, LR, main=sp2)
-        x1 <- b1[-1] - diff(b1)
-        x2 <- b2[-1] - diff(b2)
-        plot(x1, rowSums(KL), type='l', main=sp2)
-        plot.window(xlim=range(x1), ylim=range(xf))
-        lines(x1, xf, col='red')
-        plot(x2, colSums(KL), type='l', main=sp2)
-        plot.window(xlim=range(x2), ylim=range(yf))
-        lines(x2, yf, col='red')
-        plot(x1, rowSums(chi.d), type='l')
-        plot(x2, colSums(chi.d), type='l')
-    })
-    input <- readline("next: ")
-}
 
 ## take mutual information information and plot in some
 ## reasonable manner to summarise.
@@ -2286,19 +2016,13 @@ plot.x.mi <- function(mi, sp1='denticeps_clupeoides', exclude.sp=NULL, by.sp1=TR
     if(by.sp1 && sp1.h){
         s <- log2(orth$l[,sp1])
         s <- s[ !is.na(s) & s >= log2(min.s) ]
-##        h <- hist(s, breaks=mi$leaves[[sp1]][[1]]$b1, plot=FALSE)
         h <- hist(s, breaks=breaks.n, plot=FALSE)
         plot.window(xlim=range(x), ylim=range(h$counts))
         rect( h$breaks[-length(h$breaks)], 0, h$breaks[-1], h$counts, col=rgb(0.8, 0.8, 0.8), border=NA )
     }
-##    plot.window(xlim=range(x), ylim=range(x.mi))
     par('new'=TRUE)
     plot(1,1, type='n', xlim=range(x), ylim=range(x.mi), xlab=xlab, ylab=ylab, frame.plot=FALSE, ...)
     par('new'=FALSE)
-    ## axis(1)
-    ## axis(2)
-##    mtext(xlab, 1, line=3.1)
-##    mtext("sum KL divergence", 2, line=3.1)
     cols.v <- log2(genome.size[ colnames(x) ])
     cols <- hsvScale(cols.v)
     if(col.by[1] == 'k2'){
@@ -2332,132 +2056,7 @@ plot.x.mi <- function(mi, sp1='denticeps_clupeoides', exclude.sp=NULL, by.sp1=TR
 
 leaves.267 <- collect.leaves(267)
 
-par(mfrow=c(2,4))
-tmp <- plot.x.mi( KL.266, sp1='denticeps_clupeoides', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100 )
-cols <- hsvScale( log2(genome.size[tmp$sp2]))
-tmp.ch <- plot.x.mi( KL.266, sp1='denticeps_clupeoides', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100, plot.tp='chi.d' )
-plot.new()
-plot.window(xlim=range(tmp$x), ylim=range(tmp$h$counts))
-with(tmp$h, rect( breaks[-length(breaks)], 0, breaks[-1], counts, col=rgb(0.8,0.8,0.8), border=NA))
-plot.window(xlim=range(tmp$x), ylim=range(0, max(colSums(tmp$mi))))
-axis(1)
-axis(2)
-for(i in 1:ncol(tmp$x))
-    lines(tmp$x[,i], cumsum(tmp$mi[,i]), col=cols[i])
-##tmp <- plot.x.mi( KL.266, sp1='denticeps_clupeoides', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), by.sp1=FALSE )
-plot( log2(genome.size[ colnames(tmp$mi) ]), colSums(tmp$mi[1:20,]) )
-##plot( log2(genome.size[ colnames(tmp.ch$mi) ]), colSums(tmp.ch$mi[1:20,]) )
-
-summary(lm( colSums(tmp$mi) ~ log2(genome.size[colnames(tmp$mi)]) ))
-summary(lm( colSums(tmp.ch$mi) ~ log2(genome.size[colnames(tmp.ch$mi)]) ))
-
-##
-par(mfrow=c(2,4))
-
-##sp1 <- 'denticeps_clupeoides'
-##sp1 <- 'oryzias_latipes'
-## sp1 <- 'danio_rerio'
-tmp2 <- plot.x.mi( KL.266, sp1=sp1, exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100 )
-tmp2.ch <- plot.x.mi( KL.266, sp1=sp1, exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100,
-                     plot.tp='chi.d' )
-plot.new()
-plot.window(xlim=range(tmp2$x), ylim=range(tmp2$h$counts))
-with(tmp2$h, rect( breaks[-length(breaks)], 0, breaks[-1], counts, col=rgb(0.8,0.8,0.8), border=NA))
-plot.window(xlim=range(tmp2$x), ylim=range(0, max(colSums(tmp2$mi))))
-axis(1)
-axis(2)
-for(i in 1:ncol(tmp2$x))
-    lines(tmp2$x[,i], cumsum(tmp2$mi[,i]), col=tmp2$col[i]) 
-##tmp2 <- plot.x.mi( KL.266, sp1='danio_rerio', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), by.sp1=FALSE )
-plot( log2(genome.size[ colnames(tmp2$mi) ]), colSums(tmp2$mi[1:20,]), col=tmp$col, pch=19 )
-##plot( ex.align.2.k2[sp1, tmp2$sp2], colSums(tmp2$mi) )
-##identify( log2(genome.size[ colnames(tmp2$mi) ]), colSums(tmp2$mi), colnames(tmp2$mi) )
-
-summary(lm( colSums(tmp2$mi) ~ log2(genome.size[colnames(tmp2$mi)]) ))
-summary(lm( colSums(tmp2$mi[11:20,]) ~ log2(genome.size[colnames(tmp2$mi)]) ))
-summary(lm( colSums(tmp2$mi[1:2,]) ~ log2(genome.size[colnames(tmp2$mi)]) ))
-plot( log2(genome.size[ colnames(tmp2$mi) ]), colSums(tmp2$mi[1:2,]) )
-plot( log2(genome.size[ colnames(tmp2$mi) ]), colSums(tmp2$mi[1:20,]) )
-
-par(mfrow=c(2,4))
-tmp <- plot.x.mi( KL.253, sp1='latimeria_chalumnae', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100,
-                 col.by='k2')
-cols <- hsvScale( log2(genome.size[tmp$sp2]))
-tmp.ch <- plot.x.mi( KL.253, sp1='latimeria_chalumnae', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100, col.by='sp')
-plot.new()
-plot.window(xlim=range(tmp$x), ylim=range(tmp$h$counts))
-with(tmp$h, rect( breaks[-length(breaks)], 0, breaks[-1], counts, col=rgb(0.8,0.8,0.8), border=NA))
-plot.window(xlim=range(tmp$x), ylim=range(0, max(colSums(tmp$mi))))
-axis(1)
-axis(2)
-for(i in 1:ncol(tmp$x))
-    lines(tmp$x[,i], cumsum(tmp$mi[,i]), col=tmp$col[i])
-##tmp <- plot.x.mi( KL.253, sp1='denticeps_clupeoides', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), by.sp1=FALSE )
-plot( log2(genome.size[ colnames(tmp$mi) ]), colSums(tmp$mi[1:20,]) )
-##plot( log2(genome.size[ colnames(tmp.ch$mi) ]), colSums(tmp.ch$mi[1:20,]) )
-
-tmp <- plot.x.mi( KL.253, sp1='homo_sapiens', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100, col.by='k2' )
-cols <- hsvScale( log2(genome.size[tmp$sp2]))
-tmp.ch <- plot.x.mi( KL.253, sp1='homo_sapiens', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100, col.by='sp' )
-plot.new()
-plot.window(xlim=range(tmp$x), ylim=range(tmp$h$counts))
-with(tmp$h, rect( breaks[-length(breaks)], 0, breaks[-1], counts, col=rgb(0.8,0.8,0.8), border=NA))
-plot.window(xlim=range(tmp$x), ylim=range(0, max(colSums(tmp$mi))))
-axis(1)
-axis(2)
-for(i in 1:ncol(tmp$x))
-    lines(tmp$x[,i], cumsum(tmp$mi[,i]), col=tmp$col[i])
-##tmp <- plot.x.mi( KL.253, sp1='denticeps_clupeoides', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), by.sp1=FALSE )
-plot( log2(genome.size[ colnames(tmp$mi) ]), colSums(tmp$mi[1:20,]) )
-
-tmp <- plot.x.mi( KL.253, sp1='gallus_gallus', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100, col.by='k2' )
-cols <- hsvScale( log2(genome.size[tmp$sp2]))
-tmp.ch <- plot.x.mi( KL.253, sp1='gallus_gallus', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100, col.by='sp' )
-plot.new()
-plot.window(xlim=range(tmp$x), ylim=range(tmp$h$counts))
-with(tmp$h, rect( breaks[-length(breaks)], 0, breaks[-1], counts, col=rgb(0.8,0.8,0.8), border=NA))
-plot.window(xlim=range(tmp$x), ylim=range(0, max(colSums(tmp$mi))))
-axis(1)
-axis(2)
-for(i in 1:ncol(tmp$x))
-    lines(tmp$x[,i], cumsum(tmp$mi[,i]), col=tmp$col[i])
-##tmp <- plot.x.mi( KL.253, sp1='denticeps_clupeoides', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), by.sp1=FALSE )
-plot( log2(genome.size[ colnames(tmp$mi) ]), colSums(tmp$mi[1:20,]) )
-
-par(mfrow=c(2,4))
-tmp <- plot.x.mi( KL.259, sp1='homo_sapiens', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100, col.by='k2' )
-cols <- hsvScale( log2(genome.size[tmp$sp2]))
-tmp.ch <- plot.x.mi( KL.259, sp1='homo_sapiens', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100, col.by='sp' )
-plot.new()
-plot.window(xlim=range(tmp$x), ylim=range(tmp$h$counts))
-with(tmp$h, rect( breaks[-length(breaks)], 0, breaks[-1], counts, col=rgb(0.8,0.8,0.8), border=NA))
-plot.window(xlim=range(tmp$x), ylim=range(0, max(colSums(tmp$mi))))
-axis(1)
-axis(2)
-for(i in 1:ncol(tmp$x))
-    lines(tmp$x[,i], cumsum(tmp$mi[,i]), col=tmp$col[i])
-##tmp <- plot.x.mi( KL.259, sp1='denticeps_clupeoides', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), by.sp1=FALSE )
-plot( log2(genome.size[ colnames(tmp$mi) ]), colSums(tmp$mi[1:20,]), col=sp.col[colnames(tmp$mi)] )
-
-sp1 <- 'danio_rerio'
-sp1 <- 'denticeps_clupeoides'
-sp1 <- 'betta_splendens'
-sp1 <- 'oryzias_latipes'
-tmp <- plot.x.mi( KL.259, sp1=sp1, exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100, col.by='k2' )
-cols <- hsvScale( log2(genome.size[tmp$sp2]))
-tmp.ch <- plot.x.mi( KL.259, sp1=sp1, exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), breaks.n=100, col.by='sp' )
-plot.new()
-plot.window(xlim=range(tmp$x), ylim=range(tmp$h$counts))
-with(tmp$h, rect( breaks[-length(breaks)], 0, breaks[-1], counts, col=rgb(0.8,0.8,0.8), border=NA))
-plot.window(xlim=range(tmp$x), ylim=range(0, max(colSums(tmp$mi))))
-axis(1)
-axis(2)
-for(i in 1:ncol(tmp$x))
-    lines(tmp$x[,i], cumsum(tmp$mi[,i]), col=tmp$col[i])
-##tmp <- plot.x.mi( KL.259, sp1='denticeps_clupeoides', exclude.sp=c(leaves.267$names, names(int.s.b[ !int.s.b ])), by.sp1=FALSE )
-plot( log2(genome.size[ colnames(tmp$mi) ]), colSums(tmp$mi[1:20,]), col=sp.col[colnames(tmp$mi)] )
-
-
+## some examples
 plot.x.mi( KL.247, sp1='gallus_gallus',  exclude.sp=c(names(int.s.b[ !int.s.b ])), breaks.n=100 )
 plot.x.mi( KL.247, sp1='gopherus_agassizii',  exclude.sp=c(names(int.s.b[ !int.s.b ])), breaks.n=100 )
 plot.x.mi( KL.247, sp1='crocodylus_porosus',  exclude.sp=c(names(int.s.b[ !int.s.b ])), breaks.n=100 )
@@ -2465,101 +2064,46 @@ plot.x.mi( KL.247, sp1='anolis_carolinensis',  exclude.sp=c(names(int.s.b[ !int.
 plot.x.mi( KL.247, sp1='pogona_vitticeps',  exclude.sp=c(names(int.s.b[ !int.s.b ])), breaks.n=100 )
 plot.x.mi( KL.247, sp1='sphenodon_punctatus',  exclude.sp=c(names(int.s.b[ !int.s.b ])), breaks.n=100 )
 
-tmp <- sapply( KL.266$leaves[[sp1]], function(x){ x$mi } )
 
-tmp <- tmp[ !(names(tmp) %in% c(sp1, 'hucho_hucho')) ]
-tmp.l <- collect.leaves( 267 )$names
-tmp.l <- tmp.l[ int.s.b[tmp.l] ]
-b <- names(tmp) %in% tmp.l
-tmp <- tmp[ int.s.b[ names(tmp) ] ]
-plot(log2(genome.size[names(tmp)]), tmp)
-points(log2(genome.size[names(tmp[!b])]), tmp[!b], pch=19)
-##points(log2(genome.size[tmp.l]), tmp[ tmp.l ], pch=19)
-identify(log2(genome.size[names(tmp)]), tmp, names(tmp))
+### Simple stats discretised by the level of each stat:
+### calulates the correlation and mutual information of the
+### total sets or by the discretised sets.
+cor.mi.259.hs.2 <- stats.discretise( 'homo_sapiens', 259, brk.l=3 )
+cor.mi.259.dr.2 <- stats.discretise( 'danio_rerio', 259, brk.l=3 )
+cor.mi.259.dc.2 <- stats.discretise( 'denticeps_clupeoides', 259, brk.l=3 )
+cor.mi.259.bs.2 <- stats.discretise( 'betta_splendens', 259, brk.l=3 )
 
-x <- log2(genome.size[names(tmp[!b])])
-y <- tmp[!b]
-summary(lm(y ~ x))
+## convert to a more convenient table.. 
+hs.stats.2 <- t(sapply( cor.mi.259.hs.2, function(x){
+    c(x$cor.x, x$cor.y, x$mi.x, x$mi.y, x$cor.all, x$mi.all) }))
 
-oe.cols <- c(1,2,4,3)
+dr.stats.2 <- t(sapply( cor.mi.259.dr.2, function(x){
+    c(x$cor.x, x$cor.y, x$mi.x, x$mi.y, x$cor.all, x$mi.all) }))
 
-## and simple functions to plot
-plot.shared.oe.k2 <- function(ci, cols=1:length(ci), sp.cmp='danio_rerio',
-                              cmp.root=267, dist=ex.align.2.k2, pt.cex=1, root.cex=pt.cex/2, root.col='grey',
-                              pt.pch=19, exclude.sp=c('hucho_hucho'), ...
-                              ){
-    oe <- lapply(1:length(ci), function(i){
-        sp <- recycle(sp.cmp, i)
-        sp.b <- !(colnames( ci[[i]]$pair.n ) %in% c(sp, exclude.sp))
-        o <- log2( with(ci[[i]], pair.n / pair.n.exp)[ sp, sp.b] )
-        o[!is.finite(o)] <- 0
-        o
-    })
-    sp <- lapply(oe, names)
-    x <- lapply(1:length(sp), function(i){ dist[ recycle(sp.cmp, i), sp[[i]] ] })
-    root.sp <- collect.leaves(cmp.root)$names
-    plot(1,1, xlim=range(unlist(x)), ylim=range(unlist(oe)), xlab='Kimura 2-factor', ylab='log2 obs/exp', ...)
-    for(i in 1:length(oe)){
-        points( x[[i]], oe[[i]], col=recycle(cols, i), cex=pt.cex, pch=pt.pch )
-        points( x[[i]][root.sp], oe[[i]][root.sp], col=root.col, cex=root.cex, pch=pt.pch )
-    }
-    abline(h=0, lty=3)
-    invisible(lapply(1:length(oe), function(i){
-        b <- !(names(oe[[i]]) %in% root.sp)
-        lm( oe[[i]][b] ~ x[[i]][b] )
-    }))
-}
+dc.stats.2 <- t(sapply( cor.mi.259.dc.2, function(x){
+    c(x$cor.x, x$cor.y, x$mi.x, x$mi.y, x$cor.all, x$mi.all) }))
 
-plot.shared.oe.gs <- function(ci, cols=1:length(ci), sp.cmp='danio_rerio',
-                              cmp.root=267, gs=genome.size, pt.cex=1, root.cex=pt.cex/2, root.col='grey',
-                              pt.pch=19, exclude.sp='hucho_hucho', ...
-                              ){
-    oe <- lapply(1:length(ci), function(i){
-        sp <- recycle(sp.cmp, i)
-        sp.b <- !(colnames( ci[[i]]$pair.n ) %in% c(sp, exclude.sp))
-        o <- log2( with(ci[[i]], pair.n / pair.n.exp)[ sp, sp.b] )
-        o[!is.finite(o)] <- 0
-        o
-    })
-    sp <- lapply(oe, names)
-    x <- lapply(sp, function(s){ log2(gs[s]) })
-    root.sp <- collect.leaves(cmp.root)$names
-    plot(1,1, xlim=range(unlist(x)), ylim=range(unlist(oe)), xlab='log2 genome size', ylab='log2 obs/exp', ...)
-    for(i in 1:length(oe)){
-        points( x[[i]], oe[[i]], col=recycle(cols, i), cex=pt.cex, pch=pt.pch )
-        points( x[[i]][root.sp], oe[[i]][root.sp], col=root.col, cex=root.cex, pch=pt.pch )
-    }
-    abline(h=0, lty=3)
-    invisible(lapply(1:length(oe), function(i){
-        b <- !(names(oe[[i]]) %in% root.sp)
-        lm( oe[[i]][b] ~ x[[i]][b] )
-    }))
-}
+bs.stats.2 <- t(sapply( cor.mi.259.bs.2, function(x){
+    c(x$cor.x, x$cor.y, x$mi.x, x$mi.y, x$cor.all, x$mi.all) }))
 
-par(mfrow=c(2,2))
-plot.shared.oe.gs( list(tel.ci.min, tel.ci.short, tel.ci.long), cols=oe.cols, sp.cmp='danio_rerio', root.col='white' )
-plot.shared.oe.gs( list(tel.ci.min, tel.ci.short, tel.ci.long), cols=oe.cols, sp.cmp='denticeps_clupeoides', root.col='white' )
-plot.shared.oe.k2( list(tel.ci.min, tel.ci.short, tel.ci.long), cols=oe.cols, sp.cmp='danio_rerio', root.col='white' )
-plot.shared.oe.k2( list(tel.ci.min, tel.ci.short, tel.ci.long), cols=oe.cols, sp.cmp='denticeps_clupeoides', root.col='white' )
+## these are explored further down in this file and compard to data
+## generated using a random model of intron size evolution.
 
 make.summary.figure <- function(fname=NULL){
     adj=1
     padj=0.16
     line=1.5
-    if(!is.null(fname))
-        cairo_pdf( fname, width=full.w*pdf.m, height=full.w*pdf.m*1.25 )
+    if(!is.null(fname)){
+        ## for 4 rows:
+        ##cairo_pdf( fname, width=full.w*pdf.m, height=full.w*pdf.m*1.25 )
+        ## for 3 rows:
+        cairo_pdf( fname, width=full.w*pdf.m, height=full.w*pdf.m*1 )
+    }
     ## make a figure with 4 columns and 4 rows and see how that works out..
-    ## we have to use split.screen since the underlying function uses that.
+    ## we have to use split.screen since some underlying functions use that.
     close.screen(all.screens=TRUE)
-    ## to position the panel labels, we do:
-    ## we make a final screen that covers everything and calculate the coordinates
-    ## from that
-    ## left <- rep( seq(0, 2/3, 1/3), 4 )
-    ## right <- left + 0.25
-    ## bottom <- as.numeric( t(matrix(seq(0.75, 0, -0.25), nrow=4, ncol=3) ))
-    ## top <- bottom + 0.25
-    ## panels <- split.screen( cbind( c(left,0), c(right,1), c(bottom,0), c(top,1)))
-    panels <- split.screen( c(4,3) )
+##    panels <- split.screen( c(4,3) )
+    panels <- split.screen( c(3,3) )
     h2.i <- c(78, 2, 127) ##,
         ## 266, 253, 248,
         ## 276, 21, 6,
@@ -2595,7 +2139,7 @@ make.summary.figure <- function(fname=NULL){
         with(par(), mtext(LETTERS[panel], side=2, at=usr[4], line=line, cex=mt.cex, las=1, padj=padj, adj=adj))
     })
     panel <- panel + 1
-    kernel <- dnorm(0:20, sd=6)  ## used as default by h.tform
+    ## kernel <- dnorm(0:20, sd=6)  ## used as default by h.tform (but needs to be defined outside of this function)
     for(i in 1:length(h2.i)){
         tmp <- hist.2d.2(int.s.inf.2[[h2.xi[i]]]$state[,1], int.s.inf.2[[h2.i[i]]]$state[,1], panel,
                          dist.w=0.25, dist.h=0.3, h.tform=h.tform, mar=mar, ax.cex=0.5, ax.mgp=c(3,0.2,0),
@@ -2618,7 +2162,6 @@ make.summary.figure <- function(fname=NULL){
     panel <- panel+1
     screen(panel)
     par(mar=mar)
-##    vis.min.summary(id.pts=vis.min.pts, cex.lab=cex.xylab, cex.xylab=cex.xylab, cex.leg=cex.leg, cex.axis=ax.cex, mgp.axis=ax.mgp)
     vis.min.summary(id.pts=NULL, cex.lab=cex.xylab, cex.xylab=cex.xylab, cex.leg=cex.leg, cex.axis=ax.cex, mgp.axis=ax.mgp)
     ##
     with(par(), mtext(LETTERS[panel], side=2, at=usr[4], line=line, cex=mt.cex, las=1, adj=adj, padj=padj))
@@ -2635,43 +2178,52 @@ make.summary.figure <- function(fname=NULL){
              xlab='D. rerio', ylab='O. latipes')
         with(par(), mtext(LETTERS[panel], side=2, at=usr[4], line=line, cex=mt.cex, las=1, adj=adj, padj=padj))
     })
-##    with(par(), mtext(LETTERS[panel], side=2, at=usr[4], line=line, cex=mt.cex, las=1))
-##    with(par(), mtext(LETTERS[panel], side=2, at=usr[4], line=line, cex=mt.cex, las=1))
+    ## show the regions used to compare correlations:
+    dr.l <- cor.mi.259.dr.2[['oryzias_latipes']]$x.brk
+    with(par(), rect(dr.l[-length(dr.l)], usr[3], dr.l[-1], usr[4], col=rgb(0,0,0,0.05)))
     panel <- panel+1
     screen(panel)
     par(mar=mar)
-    sp1.l <- mk.species.label(sp1)
-    sp2.l <- mk.species.label(sp2)
-    with( KL.266$leaves[[sp1]][[sp2]], image.marginal(b1, b2, LR, dist.w=0.25, dist.h=0.3,
-                                                      mar=mar, ax.cex=ax.cex, ax.mgp=c(3,0.2,0),
-                                                      panel.label=LETTERS[panel], panel.padj=padj,
-                                                      panel.adj=adj, panel.line=1,
-                                                      xlab=sp1.l, ylab=sp2.l))
-    ## plot.shared.oe.k2( list(tel.ci.min, tel.ci.short, tel.ci.long), cols=oe.cols, sp.cmp='denticeps_clupeoides', root.col='white',
-    ##                   cex.lab=cex.xylab, cex.axis=ax.cex, mgp=ax.mgp, tcl=ax.tcl, pt.cex=0.75, root.cex=0.25)
-    ## legend('topleft', legend=c("76 -> 100", "76 -> 256", "1024 -> 65536"), pch=19, col=oe.cols[1:3], cex=0.75)
-    ## with(par(), mtext(LETTERS[panel], side=2, at=usr[4], line=line, cex=mt.cex, las=1))
-    panel <- panel+1
-    screen(panel)
-    par(mar=mar)
-    with( KL.266$leaves[[sp1]][[sp2]], image.marginal(b1, b2, KL, dist.w=0.25, dist.h=0.3,
-                                                      mar=mar, ax.cex=ax.cex, ax.mgp=c(3,0.2,0),
-                                                      panel.label=LETTERS[panel], panel.padj=padj,
-                                                      panel.adj=adj, panel.line=1,
-                                                      xlab=sp1.l, ylab=sp2.l))
-###
-    panel <- panel + 1
-    screen(panel)
-    par(mar=mar)
-    plot.x.mi( KL.266, sp1='danio_rerio', exclude.sp=c(names(int.s.b[!int.s.b])), breaks.n=100, col.by='k2',
-              xlab="D. rerio size", ylab="sum KLD",  cex.lab=cex.xylab, cex.axis=ax.cex, mgp=ax.mgp, tcl=ax.tcl)
-    with(par(), mtext(LETTERS[panel], side=2, at=usr[4], line=line, cex=mt.cex, las=1))
-    panel <- panel + 1;
-    screen(panel)
-    par(mar=mar)
-    plot.x.mi( KL.259, sp1='homo_sapiens', exclude.sp=c(names(int.s.b[!int.s.b])), breaks.n=100, col.by='k2',
-              xlab="H. sapiens size", ylab="sum KLD", cex.lab=cex.xylab, cex.axis=ax.cex, mgp=ax.mgp, tcl=ax.tcl)
-    with(par(), mtext(LETTERS[panel], side=2, at=usr[4], line=line, cex=mt.cex, las=1))
+    ## show the increase in correlation for long introns
+    plot(ex.align.2.k2['danio_rerio', rownames(dr.stats.2)],
+         dr.stats.2[,2] / dr.stats.2[,1], col=sp.col[rownames(dr.stats.2)], pch=19,
+         cex.lab=cex.xylab, cex.axis=ax.cex, mgp=ax.mgp, tcl=ax.tcl, xlab='D. rerio Kimura 2-factor',
+         ylab='correlation ratio (long / short)')
+        with(par(), mtext(LETTERS[panel], side=2, at=usr[4], line=line, cex=mt.cex,
+                          las=1, adj=adj, padj=padj))
+    legend('topleft', legend=names(class.col), col=class.col, pch=19, cex=cex.leg)
+    ## The commented out code creates beautiful plots arguing that long introns contribute
+    ## to the mutual information in intron lengths between species. Unfortunately, it
+    ## appears that it is possible that these patterns could arise from random but restricted
+    ## evolution of size, and I do not feel comfortable to use them as evidence.
+    ## sp1.l <- mk.species.label(sp1)
+    ## sp2.l <- mk.species.label(sp2)
+    ## with( KL.266$leaves[[sp1]][[sp2]], image.marginal(b1, b2, LR, dist.w=0.25, dist.h=0.3,
+    ##                                                   mar=mar, ax.cex=ax.cex, ax.mgp=c(3,0.2,0),
+    ##                                                   panel.label=LETTERS[panel], panel.padj=padj,
+    ##                                                   panel.adj=adj, panel.line=1,
+    ##                                                   xlab=sp1.l, ylab=sp2.l))
+##     panel <- panel+1
+##     screen(panel)
+##     par(mar=mar)
+##     with( KL.266$leaves[[sp1]][[sp2]], image.marginal(b1, b2, KL, dist.w=0.25, dist.h=0.3,
+##                                                       mar=mar, ax.cex=ax.cex, ax.mgp=c(3,0.2,0),
+##                                                       panel.label=LETTERS[panel], panel.padj=padj,
+##                                                       panel.adj=adj, panel.line=1,
+##                                                       xlab=sp1.l, ylab=sp2.l))
+## ###
+##     panel <- panel + 1
+##     screen(panel)
+##     par(mar=mar)
+##     plot.x.mi( KL.266, sp1='danio_rerio', exclude.sp=c(names(int.s.b[!int.s.b])), breaks.n=100, col.by='k2',
+##               xlab="D. rerio size", ylab="sum KLD",  cex.lab=cex.xylab, cex.axis=ax.cex, mgp=ax.mgp, tcl=ax.tcl)
+##     with(par(), mtext(LETTERS[panel], side=2, at=usr[4], line=line, cex=mt.cex, las=1))
+##     panel <- panel + 1;
+##     screen(panel)
+##     par(mar=mar)
+##     plot.x.mi( KL.259, sp1='homo_sapiens', exclude.sp=c(names(int.s.b[!int.s.b])), breaks.n=100, col.by='k2',
+##               xlab="H. sapiens size", ylab="sum KLD", cex.lab=cex.xylab, cex.axis=ax.cex, mgp=ax.mgp, tcl=ax.tcl)
+##     with(par(), mtext(LETTERS[panel], side=2, at=usr[4], line=line, cex=mt.cex, las=1))
     if(!is.null(fname))
         dev.off()
 }
@@ -2680,86 +2232,49 @@ make.summary.figure <- function(fname=NULL){
 kernel <- dnorm(0:20, sd=6)  ## used as default by h.tform         
 make.summary.figure('intron_size_evolution_summary.pdf')
 
-close.screen( all.screens=TRUE )
-split.screen(c(2,2))
 
-with(orth, hist.2d.2(int.s.inf.2[[78]]$state[,1], int.s.inf.2[[26]]$state[,1], 1, mar=c(2.6,2.6,1.1,1.1), h.tform=h.tform ))
-with(orth, hist.2d.2(int.s.inf.2[[26]]$state[,1], int.s.inf.2[[78]]$state[,1], 2, mar=c(2.6,2.6,1.1,1.1), h.tform=h.tform ))
+## example plots showing the realtionship between divergence and the difference
+## in the correlation for long and short introns
 
+plot( ex.align.2.k2['betta_splendens', rownames(bs.stats.2)], bs.stats.2[,4] / bs.stats.2[,3],
+     col=sp.col[ rownames(bs.stats.2) ],pch=19)
 
+plot( ex.align.2.k2['betta_splendens', rownames(bs.stats.2)], bs.stats.2[,6] / bs.stats.2[,5],
+     col=sp.col[ rownames(bs.stats.2) ],pch=19)
 
-plot.shared <- function(mar=c(2.6, 2.6, 1.1, 2.6), leaf.rm=0.1, leaf.cex=0.8){
-##    screens <- split.screen(c(1,2))
-    screens <- split.screen(matrix(c(0, 1/3, 0, 1,
-                                     1/3, 2/3, 0, 1,
-                                     2/3, 1, 1/2, 1,
-                                     2/3, 1, 0, 1/2),
-                                   ncol=4, byrow=TRUE))
-    screen(screens[1])
-    par(mar=c(mar[1:3], 0))
-    Td.266 <- draw.tree( ex.align.2.k2.nj, tree.lines, root=266, label.nodes=FALSE, rm=leaf.rm, leaf.cex=leaf.cex, leaf.font=3 )
-    gs <- (genome.size[ Td.266$nodes$sp ])
-    gs.cols <- hsvScale(log2(gs))
-    names(gs.cols) <- names(gs)
-    screen(screens[2])
-    par(mar=c(mar[1], 0, mar[3:4]))
-    obs.exp.min <- log2(with(tel.ci.min, pair.n / pair.n.exp)['danio_rerio',])
-    obs.exp.min <- obs.exp.min[ names(obs.exp.min) != 'danio_rerio' ]
-    obs.exp.lng <- log2(with(tel.ci.long, pair.n / pair.n.exp)['denticeps_clupeoides',])
-    obs.exp.lng <- obs.exp.lng[ names(obs.exp.lng) != 'denticeps_clupeoides' ]
-    sp1 <- names(obs.exp.min)
-    sp2 <- names(obs.exp.lng)
-    y <- with(Td.266, lines$y[nodes$leaf.b])
-    names(y) <- Td.266$nodes$sp
-    plot.new()
-    plot.window( xlim=c(0, max(gs)), ylim=Td.266$usr[3:4], yaxs='i' )
-    h <- diff(y)[1] / 2
-    rect( 0, y-h, gs, y, col='grey', border=NA )
-    plot.window( xlim=range(obs.exp.min, obs.exp.lng), ylim=Td.266$usr[3:4], yaxs='i' )
-##    with(Td.266, segments(0, lines$y[nodes$leaf.b], obs.exp.min))
-    rect( 0, y[sp1], obs.exp.min, y[sp1]+h, col=rgb(0.8, 0, 0, 1))
-    rect( 0, y[sp2], obs.exp.lng, y[sp2]+h, col=rgb(0, 0, 0.8, 0.4))
-    ## with(Td.266, points(obs.exp.min, y[sp1], col=gs.cols[sp1], lwd=4, pch=1))
-    ## with(Td.266, points(obs.exp.lng, y[sp2], col=gs.cols[sp2], lwd=4, pch=2))
-    axis(1)
-    abline(v=0)
-    ## plot exon distance vs, observed / expected ratios. Do for all regardless of
-    ## clade..
-    ## lets remove hucho hucho from consideration:
-    sp1 <- sp1[ sp1 != 'hucho_hucho' ]
-    sp2 <- sp2[ sp2 != 'hucho_hucho' ]
-    dist.1 <- ex.align.2.k2['danio_rerio', sp1]
-    dist.2 <- ex.align.2.k2['denticeps_clupeoides', sp2]
-    screen(screens[3])
-    sp.276 <- collect.leaves(276)$names
-    sp.267 <- collect.leaves(267)$names
-    plot(dist.1[sp1], obs.exp.min[sp1], xlim=range(c(dist.1[sp1], dist.2[sp2])),
-         ylim=range(c(obs.exp.min[sp1], obs.exp.lng[sp2])), pch=19, col=2)
-    points(dist.2[sp2], obs.exp.lng[sp2], pch=19, col=4)
-    points(dist.1[sp.267], obs.exp.min[sp.267], pch=19, cex=0.5, col='grey')
-    points(dist.2[sp.267], obs.exp.lng[sp.267], pch=19, cex=0.5, col='grey')
-    screen(screens[4])
-    plot( log2( gs[sp1] ), obs.exp.min[sp1], xlim=range(log2(gs[sp1])), ylim=range(c(obs.exp.min[sp1], obs.exp.lng[sp2])), pch=19, col=2)
-    points( log2( gs[sp2] ), obs.exp.lng[sp2], pch=19, col=4)
-    points(log2(gs[sp.267]), obs.exp.min[sp.267], pch=19, cex=0.5, col='grey')
-    points(log2(gs[sp.267]), obs.exp.lng[sp.267], pch=19, cex=0.5, col='grey')
-    lm1 <- lm( obs.exp.min[sp1] ~ dist.1[sp1] )
-    lm2 <- lm( obs.exp.lng[sp2] ~ dist.2[sp2] )
-    lm3 <- lm( obs.exp.min[sp1] ~ gs[sp1] )
-    lm4 <- lm( obs.exp.lng[sp2] ~ gs[sp2] )
-    lm5 <- lm( obs.exp.min[sp1] ~ dist.1[sp1] + gs[sp1] )
-    lm6 <- lm( obs.exp.lng[sp2] ~ dist.2[sp2] + gs[sp2] )
-    lm7 <- lm( obs.exp.min[sp.276] ~ dist.1[sp.276] )
-    lm8 <- lm( obs.exp.lng[sp.276] ~ dist.2[sp.276] )
-    lm9 <- lm( obs.exp.min[sp.276] ~ gs[sp.276] )
-    lm10 <- lm( obs.exp.lng[sp.276] ~ gs[sp.276] )
-    close.screen(screens)
-    list(lm1, lm2, lm3, lm4, lm5, lm6, lm7, lm8, lm9, lm10)
-}
+plot( ex.align.2.k2['betta_splendens', rownames(bs.stats.2)], bs.stats.2[,8] / bs.stats.2[,7],
+     col=sp.col[ rownames(bs.stats.2) ],pch=19)
 
+plot( ex.align.2.k2['danio_rerio', rownames(dr.stats.2)], dr.stats.2[,2] / dr.stats.2[,1],
+     col=sp.col[ rownames(dr.stats.2) ],pch=19)
 
-## a little bit of numerical experimenation..
+plot( ex.align.2.k2['denticeps_clupeoides', rownames(dc.stats.2)], dc.stats.2[,2] / dc.stats.2[,1],
+     col=sp.col[ rownames(dc.stats.2) ],pch=19)
 
+plot( ex.align.2.k2['homo_sapiens', rownames(hs.stats.2)], hs.stats.2[,2] / hs.stats.2[,1],
+     col=sp.col[ rownames(hs.stats.2) ],pch=19)
+
+plot( ex.align.2.k2['betta_splendens', rownames(bs.stats.2)], bs.stats.2[,2] / bs.stats.2[,1],
+     col=sp.col[ rownames(bs.stats.2) ],pch=19)
+
+hist( bs.stats.2[,1] )
+hist( bs.stats.2[,2] )
+hist( dr.stats.2[,1] )
+hist( dr.stats.2[,2] )
+
+plot( log2(genome.size[rownames(hs.stats.2)]), hs.stats.2[,2] / hs.stats.2[,1],
+     col=sp.col[ rownames(hs.stats.2) ],pch=19)
+
+## Both the discretised correlation and the mutual information seems to be informative
+## in that we see more correlation and more mutual information for the longer
+## sets of intron sizes. Still, as ever, we do need to ask if this could arise
+## from neutral evolution of sizes:
+
+## The following code is a rather inefficient means to generate randomly
+## evolved sets of intron sizes and comparing them to each other in the same
+## way as was done to get the stats for the comparison of extant species.
+
+## evolve two lineages from a common ancestor
 evol.size <- function(anc, n, anc2=anc,
                       ev.exp.1=quote(rnorm(length(anc), -1, 2)),
                       ev.exp.2=quote(rnorm(length(anc), 1, 1)),
@@ -2769,141 +2284,249 @@ evol.size <- function(anc, n, anc2=anc,
     d2 <- d1
     d2[,1] <- anc2
     for(i in 2:ncol(d1)){
-        d1[,i] <- d1[,i-1] + eval(ev.exp.1)
-        d2[,i] <- d2[,i-1] + eval(ev.exp.2)
-        d1[ d1[,i] < min.s ,i] <- min.s
-        d2[ d2[,i] < min.s ,i] <- min.s
+        delta1 <- eval(ev.exp.1)
+        delta2 <- eval(ev.exp.2)
+        ## mutations which give rise to introns that are too small
+        ## should be strongly selected against, so we will 
+        delta1[ d1[,i-1] + delta1 < min.s ] <- 0
+        delta2[ d2[,i-1] + delta2 < min.s ] <- 0
+        d1[,i] <- d1[,i-1] + delta1
+        d2[,i] <- d2[,i-1] + delta2
     }
     list(d1=d1, d2=d2)
 }
 
-count.prop.ol <- function(desc, min.v){
-    sapply(1:ncol(desc[[1]]), function(i){
-        o1 <- desc[[1]][,i] > min.v
-        o2 <- desc[[2]][,i] > min.v
-        c( sum(o1), sum(o2), sum(o1 & o2),
-          sum(o1) * sum(o2) / length(o1) )
+anc <- int.s.inf.2[[266]]$state[,1] / 10
+anc <- anc[ anc >= log2(76) ]
+
+
+desc <- lapply( 1:1000, function(i){
+    evol.size(anc, 20, anc,
+              ev.exp.1=quote(rnorm(length(anc), -0.1, 0.5)),
+              ev.exp.2=quote(rnorm(length(anc), -0.1, 0.5)))
+})
+
+## do fewer, but with a higher rate of minimisation
+## then sample across desc2 objects.. 
+desc.2 <- lapply( 1:100, function(i){
+    evol.size(anc, 20, anc,
+              ev.exp.1=quote(rnorm(length(anc), -0.15, 0.75)),
+              ev.exp.2=quote(rnorm(length(anc), -0.15, 0.75)))
+})
+
+
+## evolve from two real distributions instead
+anc.2 <- log2( orth$l[,'homo_sapiens'] )
+anc.2 <- anc.2[ anc.2 > log2(76) & !is.na(anc.2) ]
+anc.3 <- log2( orth$l[,'danio_rerio'] )
+anc.3 <- anc.3[ anc.3 > log2(76) & !is.na(anc.3) ]
+
+desc.3 <- lapply( 1:100, function(i){
+    evol.size(anc.2, 20, anc.2,
+              ev.exp.1=quote(rnorm(length(anc), -0.15, 0.75)),
+              ev.exp.2=quote(rnorm(length(anc), -0.15, 0.75)))
+})
+
+desc.4 <- lapply( 1:100, function(i){
+    evol.size(anc.3, 20, anc.3,
+              ev.exp.1=quote(rnorm(length(anc), -0.15, 0.75)),
+              ev.exp.2=quote(rnorm(length(anc), -0.15, 0.75)))
+})
+
+## this has an issue
+d1.KL <- lapply(2:ncol(d1$d1), function(i){ KL.matrix(d1$d1[,i], d1$d2[,i]) })
+with(d1.KL[[20]], image.marginal( b1, b2, KL, dist.w=0.25, dist.h=0.25 ))
+
+desc.stats <- lapply(desc, function(d1){
+    ## how about correlations and the others?
+    t(sapply( 2:21, function(i){
+        x <- d1$d1[,i]
+        y <- d1$d2[,i]
+        ## 
+        brk.l <- 4
+        x.brk <- seq(min(x), max(x), length.out=brk.l)
+        y.brk <- seq(min(y), max(y), length.out=brk.l)
+        x.l <- cut(x, breaks=x.brk, include.lowest=TRUE)
+        y.l <- cut(y, breaks=y.brk, include.lowest=TRUE)
+        cor.x <- tapply( 1:length(x), x.l, function(i){ cor(x[i], y[i]) })
+        cor.y <- tapply( 1:length(y), y.l, function(i){ cor(x[i], y[i]) })
+        mi.x <-  tapply( 1:length(x), x.l, function(i){ mutual.info(x[i], y[i], nbins1=5) })
+        mi.y <-  tapply( 1:length(y), y.l, function(i){ mutual.info(x[i], y[i], nbins1=5) })
+        c(cor.x, cor.y, mi.x, mi.y)
+    }))
+})
+
+desc.stats.2 <- lapply(desc, function(d1){
+    ## how about correlations and the others?
+    t(sapply( 2:21, function(i){
+        x <- d1$d1[,i]
+        y <- d1$d2[,i]
+        ##
+        b <- x <= quantile(x, 0.99) & y <= quantile(y, 0.99)
+        x <- x[b]
+        y <- y[b]
+        brk.l <- 3
+        x.brk <- seq(min(x), max(x), length.out=brk.l)
+        y.brk <- seq(min(y), max(y), length.out=brk.l)
+        x.l <- cut(x, breaks=x.brk, include.lowest=TRUE)
+        y.l <- cut(y, breaks=y.brk, include.lowest=TRUE)
+        cor.x <- tapply( 1:length(x), x.l, function(i){ cor(x[i], y[i]) })
+        cor.y <- tapply( 1:length(y), y.l, function(i){ cor(x[i], y[i]) })
+        mi.x <-  tapply( 1:length(x), x.l, function(i){ mutual.info(x[i], y[i], nbins1=10) })
+        mi.y <-  tapply( 1:length(y), y.l, function(i){ mutual.info(x[i], y[i], nbins1=10) })
+        c(cor.x, cor.y, mi.x, mi.y)
+    }))
+})
+
+## take a random descendant from the two different pools
+## of
+desc.2.stats <- lapply(1:length(desc.2), function(i){
+    d1 <- desc.2[[i]]$d1
+    x.i <- sample(10:ncol(d1), size=1)
+    y.i <- sample(1:length(desc), size=10)
+    x <- desc.2[[i]]$d1[,x.i]
+    sapply( y.i, function(j){
+        ## here take only the most evolved one..
+        y <- desc[[j]]$d1[,21]
+                b <- x <= quantile(x, 0.99) & y <= quantile(y, 0.99)
+        x <- x[b]
+        y <- y[b]
+        brk.l <- 3
+        x.brk <- seq(min(x), max(x), length.out=brk.l)
+        y.brk <- seq(min(y), max(y), length.out=brk.l)
+        x.l <- cut(x, breaks=x.brk, include.lowest=TRUE)
+        y.l <- cut(y, breaks=y.brk, include.lowest=TRUE)
+        cor.all <- cor(x, y)
+        mi.all <- mutual.info(x, y, nbins1=10)
+        cor.x <- tapply( 1:length(x), x.l, function(i){ cor(x[i], y[i]) })
+        cor.y <- tapply( 1:length(y), y.l, function(i){ cor(x[i], y[i]) })
+        mi.x <-  tapply( 1:length(x), x.l, function(i){ mutual.info(x[i], y[i], nbins1=10) })
+        mi.y <-  tapply( 1:length(y), y.l, function(i){ mutual.info(x[i], y[i], nbins1=10) })
+        c(cor.x, cor.y, mi.x, mi.y, cor.all, mi.all)
     })
-}
+})
 
-count.prop.ol.2 <- function(desc, min.v, max.v){
-    sapply(1:ncol(desc[[1]]), function(i){
-        o1 <- desc[[1]][,i] > min.v & desc[[1]][,i] < max.v
-        o2 <- desc[[2]][,i] > min.v & desc[[2]][,i] < max.v
-        c( sum(o1), sum(o2), sum(o1 & o2),
-          sum(o1) * sum(o2) / length(o1) )
+d2.stats <- t(do.call(cbind, desc.2.stats))
+
+## take a random descendant from the two different pools
+## of
+desc.3.stats <- lapply(1:length(desc.3), function(i){
+    d1 <- desc.3[[i]]$d1
+    x.i <- sample(10:ncol(d1), size=1)
+    y.i <- sample(1:length(desc.3), size=10)
+    x <- desc.3[[i]]$d1[,x.i]
+    sapply( y.i, function(j){
+        ## here take only the most evolved one..
+        y <- desc.3[[j]]$d1[,21]
+        b <- x <= quantile(x, 0.99) & y <= quantile(y, 0.99)
+        x <- x[b]
+        y <- y[b]
+        brk.l <- 3
+        x.brk <- seq(min(x), max(x), length.out=brk.l)
+        y.brk <- seq(min(y), max(y), length.out=brk.l)
+        x.l <- cut(x, breaks=x.brk, include.lowest=TRUE)
+        y.l <- cut(y, breaks=y.brk, include.lowest=TRUE)
+        cor.all <- cor(x, y)
+        mi.all <- mutual.info(x, y, nbins1=10)
+        cor.x <- tapply( 1:length(x), x.l, function(i){ cor(x[i], y[i]) })
+        cor.y <- tapply( 1:length(y), y.l, function(i){ cor(x[i], y[i]) })
+        mi.x <-  tapply( 1:length(x), x.l, function(i){ mutual.info(x[i], y[i], nbins1=10) })
+        mi.y <-  tapply( 1:length(y), y.l, function(i){ mutual.info(x[i], y[i], nbins1=10) })
+        c(cor.x, cor.y, mi.x, mi.y, cor.all, mi.all)
     })
-}
+})
 
+d3.stats <- t(do.call(cbind, desc.3.stats))
 
-anc1 <- int.s.inf.2[[266]]$state[,1]
-anc1 <- anc1[ anc1 >= 10 * log2(76) ]
-anc1 <- anc1 / 10
-##anc2 <- rnorm( 1000, 0, 10 )
-anc.d1 <- evol.size(anc1, 20, anc1, ev.exp.1=quote(rnorm(length(anc), -0.1, 0.5)), ev.exp.2=quote(rnorm(length(anc), 0.1, 0.5)))
-with(anc.d1, plot(d1[,2], d2[,2]))
-with(anc.d1, plot(d1[,21], d2[,21]))
+desc.4.stats <- lapply(1:length(desc.4), function(i){
+    d1 <- desc.4[[i]]$d1
+    x.i <- sample(10:ncol(d1), size=1)
+    y.i <- sample(1:length(desc.4), size=10)
+    x <- desc.4[[i]]$d1[,x.i]
+    sapply( y.i, function(j){
+        ## here take only the most evolved one..
+        y <- desc.4[[j]]$d1[,21]
+        b <- x <= quantile(x, 0.99) & y <= quantile(y, 0.99)
+        x <- x[b]
+        y <- y[b]
+        brk.l <- 3
+        x.brk <- seq(min(x), max(x), length.out=brk.l)
+        y.brk <- seq(min(y), max(y), length.out=brk.l)
+        x.l <- cut(x, breaks=x.brk, include.lowest=TRUE)
+        y.l <- cut(y, breaks=y.brk, include.lowest=TRUE)
+        cor.all <- cor(x, y)
+        mi.all <- mutual.info(x, y, nbins1=10)
+        cor.x <- tapply( 1:length(x), x.l, function(i){ cor(x[i], y[i]) })
+        cor.y <- tapply( 1:length(y), y.l, function(i){ cor(x[i], y[i]) })
+        mi.x <-  tapply( 1:length(x), x.l, function(i){ mutual.info(x[i], y[i], nbins1=10) })
+        mi.y <-  tapply( 1:length(y), y.l, function(i){ mutual.info(x[i], y[i], nbins1=10) })
+        c(cor.x, cor.y, mi.x, mi.y, cor.all, mi.all)
+    })
+})
 
-anc.KL <- lapply(2:21, function(i){ KL.matrix( anc.d1$d1[,i], anc.d1$d2[,i] )})
+d4.stats <- t(do.call(cbind, desc.4.stats))
 
+par(mfrow=c(2,4))
+hist( d3.stats[,1], breaks=100 )
+hist( d3.stats[,2], breaks=100 )
+hist( d3.stats[,3], breaks=100 )
+hist( d3.stats[,4], breaks=100 )
 
-for(i in 1:20){
-    screens <- split.screen(c(1,3))
-    screen(screens[1])
-    with(anc.KL[[i]], image.marginal(b1, b2, f2, dist.w=0.25, dist.h=0.3))
-    screen(screens[2])
-    with(anc.KL[[i]], image.marginal(b1, b2, LR, dist.w=0.25, dist.h=0.3))
-    screen(screens[3])
-    with(anc.KL[[i]], image.marginal(b1, b2, KL, dist.w=0.25, dist.h=0.3))
-    inpt <- readline("next: ")
-    close.screen(screens)
-}
+hist( dr.stats.2[,1] )
+hist( dr.stats.2[,2] )
+hist( dr.stats.2[,3] )
+hist( dr.stats.2[,4] )
 
-tmp <- count.prop.ol.2( anc.d1, 6, 10)
-tmp
-tmp[3,] / tmp[4,]
-## the above is not so promising. Lets look at the KL divergence by column instead and see how
-## that works..
+hist( d4.stats[,2] / d4.stats[,1] )
+hist( d4.stats[,4] / d4.stats[,3] )
+hist( d4.stats[,6] / d4.stats[,5] )
+hist( d4.stats[,8] / d4.stats[,7] )
 
-## the following contains code removed from the plot.summary.figure
-## it makes a compelling figure, but unfortunately, does not seem to be
-## inconsistent with random evolution of size. 
-draw.tree.params <- function(){
-    ## And some plotting of summary statistics.. 
-    pp <- -log10(sapply(com.d.long.10.276.256[b], function(x){ x$comb['p'] }))
-    names(pp) <- leaf.276$names[b]
-    pp2 <- -log10(sapply(com.d.long.10.276.256[b], function(x){ x$comb['p2'] }))
-    names(pp2) <- leaf.276$names[b]
-    oe <- sapply( com.d.long.10.276.256[b], function(x){ x$comb['obs'] / x$comb['exp'] })
-    names(oe) <-  leaf.276$names[b]
-    dd <- ex.align.2.k2[10, leaf.276$i[b]]
-    ## reuse the pp variable name, and store mutual information instead..
-    ## pp <- sapply( KL.266$leaves[[sp1]], function(z){ z$mi })
-    ##plot( gs, pp )
-    ##identify(gs, pp, leaf.276$names[b])
-    ##
-    screens <- split.screen( rbind( c(0,0.5,0,1), c(0.5,1,0,1)) )
-    screen( screens[1] )
-##    par(mfrow=c(1,2))
-    par(mar=c(mar[1:3], 0))
-    Td.276 <- draw.tree( ex.align.2.k2.nj, tree.lines, root=276, label.nodes=FALSE, rm=0.54, leaf.cex=0.35, leaf.font=3 )
-    with(par(), mtext(LETTERS[panel], side=2, at=usr[4], line=line, cex=mt.cex, las=1, adj=adj, padj=padj))
-    screen( screens[2] )
-    par(mar=c(mar[1], 0, mar[3:4]))
-    plot.new()
-    plot.window( xlim=c(0, max(pp[ Td.276$nodes$sp ])), ylim=Td.276$usr[3:4], yaxs='i' )
-    with(Td.276, segments( 0, lines$y[ nodes$leaf.b ], pp[ nodes$sp ], col=gs.cols[nodes$sp], lwd=4 ))
-    axis(1, cex.axis=ax.cex, mgp=ax.mgp, tcl=ax.tcl)
-    mtext("Mutual information", side=1, line=1, cex=cex.xylab )
-##    mtext("-log10 p", side=1, line=1, cex=cex.xylab )
-    plot.window(xlim=c(0,1), ylim=c(0,1), xaxs='i')
-    gs.r <- range( gs )
-    leg.cols <- hsvScale( seq(gs.r[1], gs.r[2], length.out=20) )
-    leg.yp <- c(0, 0.4)
-    leg.y <- seq( leg.yp[1], leg.yp[2], length.out=length(leg.cols) )
-    leg.yd <- diff(leg.y)[1]
-    rect( 0.95, leg.y, 1.0, leg.y+leg.yd, col=leg.cols, border=NA )
-    leg.tv <- seq( 28.5, 29.75, 0.25 )
-    leg.ty <- leg.yp[1] + leg.yd/2 + diff(leg.yp) * (leg.tv - gs.r[1]) / diff(gs.r)
-    segments( 0.92, leg.ty, 0.95, leg.ty )
-    text( 0.92 - strwidth("29.75", cex=0.4) * 1.05, leg.ty, sprintf("%.2f", leg.tv), adj=c(0,0.5), cex=0.4 )
-}
+hist( dr.stats.2[,2] / dr.stats.2[,1] )
+hist( dr.stats.2[,4] / dr.stats.2[,3] )
+hist( dr.stats.2[,6] / dr.stats.2[,5] )
+hist( dr.stats.2[,8] / dr.stats.2[,7] )
 
-## the following contains code removed from the plot.summary.figure
-## There are likely to be local variables that are missing from the
-## code.
-## The plot was removed from the figure, as although it shows a clear
-## pattern, it is not clear how to interpret it.
-draw.mi.gs.relationship <- function(){
-    ## plot genome size vs. mutual information for danio rerio and denticeps clupeoids
-    ## taken from KL266 measurements and genome.size..    
-    sp1.1 <- 'danio_rerio'
-    sp1.2 <- 'denticeps_clupeoides'
-    mi.1 <- sapply(KL.266$leaves[[sp1.1]], function(z){ z$mi } )
-    mi.2 <- sapply(KL.266$leaves[[sp1.2]], function(z){ z$mi } )
-    leaves.267 <- collect.leaves( 267 )$names
-    exclude.sp <- names(int.s.b[ !int.s.b ])
-    sp2.1 <- names(mi.1)
-    sp2.2 <- names(mi.2)
-    sp2.1 <- sp2.1[ !(sp2.1 %in% c(sp1.1, exclude.sp)) ]
-    sp2.2 <- sp2.2[ !(sp2.2 %in% c(sp1.2, exclude.sp)) ]
-    plot(1,1, type='n', xlab='log2 genome size', ylab='mutual information',
-         xlim=range(log2( genome.size[ c(sp2.1, sp2.2) ])),
-         ylim=range(c(mi.1[sp2.1], mi.2[sp2.2])),
-         cex.lab=cex.xylab, cex.axis=ax.cex, mgp=ax.mgp, tcl=ax.tcl)
-    sp2.c <- intersect( sp2.1, sp2.2 )
-    sp2.c <- sp2.c[ !(sp2.c %in% leaves.267) ]
-    points( log2(genome.size[sp2.1]), mi.1[sp2.1], col='red', pch=19 )
-    points( log2(genome.size[sp2.2]), mi.2[sp2.2], col='blue', pch=19 )
-    sp2 <- intersect( sp2.1, leaves.267 )
-    points( log2(genome.size[sp2]), mi.1[sp2], col='white', cex=0.5, pch=19 )
-    sp2 <- intersect( sp2.2, leaves.267 )
-    points( log2(genome.size[sp2]), mi.2[sp2], col='white', cex=0.5, pch=19 )
-    lm1 <- lm( mi.1[sp2.c] ~ log2(genome.size[sp2.c]))
-    lm2 <- lm( mi.2[sp2.c] ~ log2(genome.size[sp2.c]))
-    abline(lm1, col='red', lty=2)
-    abline(lm2, col='blue', lty=2)
-    print( summary(lm1) )
-    print( summary(lm2) )
-    legend('topright', legend=c("D. rerio", "D. clupeoides"), pch=19, col=c('red', 'blue'), cex=cex.leg)
-}
+## And the ratios:
+plot(d2.stats[,9], d2.stats[,2] / d2.stats[,1])
+plot(d2.stats[,9], d2.stats[,4] / d2.stats[,3])
+plot(d2.stats[,9], d2.stats[,6] / d2.stats[,5])
+plot(d2.stats[,9], d2.stats[,8] / d2.stats[,7])
+
+plot(dc.stats.2[,9], dc.stats.2[,2] / dc.stats.2[,1])
+plot(dc.stats.2[,9], dc.stats.2[,4] / dc.stats.2[,3])
+plot(dc.stats.2[,9], dc.stats.2[,6] / dc.stats.2[,5])
+plot(dc.stats.2[,9], dc.stats.2[,8] / dc.stats.2[,7])
+
+plot(bs.stats.2[,9], bs.stats.2[,2] / bs.stats.2[,1])
+plot(bs.stats.2[,9], bs.stats.2[,4] / bs.stats.2[,3])
+plot(bs.stats.2[,9], bs.stats.2[,6] / bs.stats.2[,5])
+plot(bs.stats.2[,9], bs.stats.2[,8] / bs.stats.2[,7])
+
+plot(dr.stats.2[,9], dr.stats.2[,2] / dr.stats.2[,1])
+plot(dr.stats.2[,9], dr.stats.2[,4] / dr.stats.2[,3])
+plot(dr.stats.2[,9], dr.stats.2[,6] / dr.stats.2[,5])
+plot(dr.stats.2[,9], dr.stats.2[,8] / dr.stats.2[,7])
+
+plot(d3.stats[,9], d3.stats[,2] / d3.stats[,1], xlim=range(dr.stats.2[,9]))
+plot(d3.stats[,9], d3.stats[,4] / d3.stats[,3], xlim=range(dr.stats.2[,9]))
+plot(d3.stats[,9], d3.stats[,6] / d3.stats[,5], xlim=range(dr.stats.2[,9]))
+plot(d3.stats[,9], d3.stats[,8] / d3.stats[,7], xlim=range(dr.stats.2[,9]))
+
+plot(dr.stats.2[,9], dr.stats.2[,2] / dr.stats.2[,1])
+plot(dr.stats.2[,9], dr.stats.2[,4] / dr.stats.2[,3])
+plot(dr.stats.2[,9], dr.stats.2[,6] / dr.stats.2[,5])
+plot(dr.stats.2[,9], dr.stats.2[,8] / dr.stats.2[,7])
+
+plot(d4.stats[,9], d4.stats[,2] / d4.stats[,1], xlim=range(dr.stats.2[,9]))
+plot(d4.stats[,9], d4.stats[,4] / d4.stats[,3], xlim=range(dr.stats.2[,9]))
+plot(d4.stats[,9], d4.stats[,6] / d4.stats[,5], xlim=range(dr.stats.2[,9]))
+plot(d4.stats[,9], d4.stats[,8] / d4.stats[,7], xlim=range(dr.stats.2[,9]))
+
+plot(dr.stats.2[,9], dr.stats.2[,2] / dr.stats.2[,1])
+plot(dr.stats.2[,9], dr.stats.2[,4] / dr.stats.2[,3])
+plot(dr.stats.2[,9], dr.stats.2[,6] / dr.stats.2[,5])
+plot(dr.stats.2[,9], dr.stats.2[,8] / dr.stats.2[,7])
+
+## these are massive differences, so I think we can have some confidence
+## in the data.
